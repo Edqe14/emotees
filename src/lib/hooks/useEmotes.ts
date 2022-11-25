@@ -10,22 +10,29 @@ const useEmotes = create(
   }))
 );
 
+useEmotes.subscribe((emotes) => {
+  localStorage.setItem('emotes', JSON.stringify(emotes.emotes));
+});
+
 export const loadEmotesFromStorage = () => {
   const emotes = localStorage.getItem('emotes');
 
   try {
     if (emotes) {
-      const parsed = JSON.parse(emotes);
+      const parsed = JSON.parse(emotes) as Emote[];
 
-      useEmotes.setState({ emotes: parsed.map((emote: Emote) => new Emote(emote)) });
+      useEmotes.setState({ emotes: parsed });
 
-      return true;
+      return parsed;
     }
+
+    localStorage.setItem('emotes', JSON.stringify(useEmotes.getState().emotes));
+
+    return useEmotes.getState().emotes;
   } catch {
     return false;
   }
 
-  return false;
 };
 
 export default useEmotes;

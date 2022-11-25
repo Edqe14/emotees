@@ -1,14 +1,32 @@
-import useConfig from '@/lib/store/useConfig';
-import useEmotes from '@/lib/store/useEmotes';
+import { ActionIcon } from '@mantine/core';
+import { IconBasket, IconMoodHappy, IconMoon, IconSun } from '@tabler/icons';
+import Layout from '@/components/Layout';
+import Logo from '@/components/Logo';
+import useTheme from '@/lib/hooks/useTheme';
 
 export default function Index() {
-  const config = useConfig();
-  const emotes = useEmotes((s) => s.emotes);
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <section>
-      <h1>{JSON.stringify(config)}</h1>
-      <h1>{JSON.stringify(emotes)}</h1>
-    </section>
+    <Layout>
+      <section className="flex w-full items-center justify-between">
+        <Logo />
+
+        <section className="flex gap-4">
+          <ActionIcon color="violet" variant="light" radius="xl">
+            <IconMoodHappy size={20} />
+          </ActionIcon>
+
+          <ActionIcon color="violet" variant="light" radius="xl">
+            <IconBasket size={20} />
+          </ActionIcon>
+
+          <ActionIcon color="violet" variant="light" radius="xl" onClick={toggleTheme}>
+            {theme === 'dark' && <IconSun size={20} />}
+            {theme === 'light' && <IconMoon size={20} />}
+          </ActionIcon>
+        </section>
+      </section>
+    </Layout>
   );
 }
