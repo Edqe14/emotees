@@ -1,4 +1,6 @@
 import { createEmotionCache, MantineProvider } from '@mantine/core';
+import { ModalsProvider } from '@mantine/modals';
+import { NotificationsProvider } from '@mantine/notifications';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
@@ -17,13 +19,19 @@ const Root = () => {
     <MantineProvider
       emotionCache={cache}
       withCSSVariables
+      withGlobalStyles
       theme={{
-        colorScheme: theme
+        colorScheme: theme,
+        fontFamily: 'Cabin, sans-serif',
       }}
     >
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <ModalsProvider>
+        <NotificationsProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </NotificationsProvider>
+      </ModalsProvider>
     </MantineProvider>
   );
 };

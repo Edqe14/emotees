@@ -4,7 +4,7 @@ interface Props {
 
 export default function Layout({ children }: Props) {
   return (
-    <main className="h-screen overflow-hidden mx-auto w-full lg:w-3/5 md:w-4/5 p-8">
+    <main className="overflow-x-hidden mx-auto w-full lg:w-3/5 md:w-5/6 p-8 pb-0">
       {children}
     </main>
   );

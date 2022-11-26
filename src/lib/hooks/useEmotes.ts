@@ -7,6 +7,19 @@ const useEmotes = create(
     emotes: [] as Emote[],
   }, (set) => ({
     setEmotes: (emotes: Emote[]) => set({ emotes }),
+    appendEmote: (emote: Emote) => set((state) => ({ emotes: [emote, ...state.emotes] })),
+    removeEmote: (index: number) => set((state) => ({ emotes: state.emotes.filter((_, i) => i !== index) })),
+    updateEmote: (index: number, data: Partial<Emote> | ((current: Emote) => Partial<Emote>)) => set((state) => {
+      const emotes = [...state.emotes];
+      const current = emotes[index];
+
+      if (!current) return {};
+
+      const merge = typeof data === 'function' ? data(current) : data;
+      emotes[index] = { ...current, ...merge };
+
+      return { emotes };
+    })
   }))
 );
 
