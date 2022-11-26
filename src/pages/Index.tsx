@@ -1,5 +1,6 @@
 import { useWindowEvent } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
+import { useLayoutEffect } from 'react';
 import Layout from '@/components/Layout';
 import isURL from '@/lib/helpers/isURL';
 import isDiscordEmojiURL from '@/lib/helpers/isDiscordEmojiURL';
@@ -40,6 +41,10 @@ export default function Index() {
       }
     }
   });
+
+  useLayoutEffect(() => {
+    window.scrollTo(0, useInternal.getState().scrollPosition);
+  }, [emotes]);
 
   return (
     <Layout>

@@ -5,12 +5,15 @@ import Emote from '@/lib/structs/Emote';
 import applyCustomNotificationOptions from '@/lib/helpers/applyCustomNotification';
 import Twemoji from './Twemoji';
 import useEmotes from '@/lib/hooks/useEmotes';
+import useInternal from '@/lib/hooks/useInternal';
 
 export default function EmoteView({ name, file }: Emote) {
+  const setScrollPosition = useInternal((s) => s.setScrollPosition);
   const clipboard = useClipboard({ timeout: 200 });
   const url = `https://cdn.discordapp.com/emojis/${file}?size=48&quality=lossless`;
 
   const onClick = () => {
+    setScrollPosition(window.scrollY);
     clipboard.copy(url);
   };
 
