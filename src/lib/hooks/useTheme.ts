@@ -2,7 +2,7 @@ import { useLocalStorage } from '@mantine/hooks';
 import { useEffect } from 'react';
 
 export default function useTheme() {
-  const [theme, setTheme] = useLocalStorage<'dark' | 'light'>({ key: 'theme', defaultValue: 'dark' });
+  const [theme, setTheme] = useLocalStorage<'dark' | 'light'>({ key: 'theme', defaultValue: 'dark', serialize: (value) => value, deserialize: (value) => value as 'dark' | 'light' });
   const toggleTheme = () => setTheme((current) => (current === 'dark' ? 'light' : 'dark'));
 
   useEffect(() => {

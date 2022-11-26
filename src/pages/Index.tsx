@@ -55,6 +55,8 @@ export default function Index() {
           <EmoteView key={emote.name} {...emote} />
         ))}
       </section>
+
+      {/* TODO: toolbar */}
     </Layout>
   );
 }
