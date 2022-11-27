@@ -3,12 +3,14 @@ import { IconBasket, IconMoodHappy, IconMoon, IconSun } from '@tabler/icons';
 import { useNavigate } from 'react-router-dom';
 import useTheme from '@/lib/hooks/useTheme';
 import Logo from '@/components/Logo';
+import concat from '@/lib/helpers/concat';
 
 export default function Navbar({ className }: { className?: string }) {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+
   return (
-    <nav className={['flex w-full items-center justify-between mb-8', className].filter(Boolean).join(' ')}>
+    <nav className={concat('flex w-full items-center justify-between mb-8 transition-colors duration-100', className)}>
       <Logo />
 
       <section className="flex gap-4 items-center">

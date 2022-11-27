@@ -1,6 +1,7 @@
 import { useWindowEvent } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useMemo } from 'react';
+
 import Layout from '@/components/Layout';
 import isURL from '@/lib/helpers/isURL';
 import isDiscordEmojiURL from '@/lib/helpers/isDiscordEmojiURL';
@@ -11,9 +12,15 @@ import useEmotes from '@/lib/hooks/useEmotes';
 import Navbar from '@/components/Navbar';
 import useInternal from '@/lib/hooks/useInternal';
 import EmoteView from '@/components/EmoteView';
+import Toolbar from '@/components/Toolbar';
+
+import animeSad from '@/assets/notfound.png';
+import useConfig from '@/lib/hooks/useConfig';
 
 export default function Index() {
+  const onlyShowFavorites = useConfig((s) => s.onlyShowFavorites);
   const emotes = useEmotes((s) => s.emotes);
+  const searchTerm = useInternal((s) => s.searchQuery);
 
   useWindowEvent('paste', (ev) => {
     const e = ev as unknown as ClipboardEvent;
@@ -46,17 +53,29 @@ export default function Index() {
     window.scrollTo(0, useInternal.getState().scrollPosition);
   }, [emotes]);
 
+  const prepedEmote = useMemo(() => emotes
+    .filter((e) => onlyShowFavorites ? e.favorite : true)
+    .filter((e) => searchTerm ? e.name.includes(searchTerm) : true)
+    .sort((a, b) => b.totalUses - a.totalUses)
+    .map((emote) => (
+      <EmoteView key={emote.name} {...emote} />
+    )), [searchTerm, emotes, onlyShowFavorites]);
+
   return (
     <Layout>
       <Navbar className="fixed top-0 right-0 left-0 p-8 w-full lg:w-3/5 md:w-5/6 mx-auto bg-slate-50 dark:bg-gray-900" />
 
-      <section className="pb-8 pt-20 flex flex-wrap gap-2 justify-center">
-        {[...emotes].sort((a, b) => b.totalUses - a.totalUses).map((emote) => (
-          <EmoteView key={emote.name} {...emote} />
-        ))}
-      </section>
+      <section className="py-20 flex flex-wrap gap-2 justify-center">
+        {prepedEmote}
+        {!prepedEmote.length && (
+          <section className="py-2">
+            <img src={animeSad} alt="sad anime girl" className="w-48 mb-4" />
 
-      {/* TODO: toolbar */}
+            <h2 className="text-lg font-medium italic">oh nyo! can&apos;t find anything</h2>
+          </section>
+        )}
+      </section>
+      <Toolbar />
     </Layout>
   );
 }

@@ -4,10 +4,15 @@ import { combine } from 'zustand/middleware';
 const useInternal = create(
   combine({
     pasteLock: false,
-    scrollPosition: 0
+    shortcutLock: false,
+
+    scrollPosition: 0,
+    searchQuery: '',
   }, (set) => ({
     setPasteLock: (pasteLock: boolean) => set({ pasteLock }),
-    setScrollPosition: (scrollPosition: number) => set({ scrollPosition })
+    setShortcutLock: (shortcutLock: boolean) => set({ shortcutLock }),
+    setScrollPosition: (scrollPosition: number) => set({ scrollPosition }),
+    setSearchQuery: (searchQuery: string) => set({ searchQuery }),
   }))
 );
 

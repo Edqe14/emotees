@@ -1,11 +1,19 @@
+import { useHotkeys } from '@mantine/hooks';
 import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { loadConfigFromStorage } from './lib/hooks/useConfig';
 import { loadEmotesFromStorage } from './lib/hooks/useEmotes';
+import useTheme from './lib/hooks/useTheme';
 
 import Index from './pages/Index';
 
 export default function App() {
+  const { toggleTheme } = useTheme();
+
+  useHotkeys([
+    ['mod+J', () => toggleTheme()],
+  ]);
+
   useEffect(() => {
     const config = loadConfigFromStorage();
 

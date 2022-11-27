@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 body {
-  @apply bg-slate-50 text-gray-800 dark:bg-gray-900 dark:text-white font-cabin;
+  @apply bg-slate-50 text-gray-800 dark:bg-gray-900 dark:text-white font-cabin transition-colors duration-100;
 }
