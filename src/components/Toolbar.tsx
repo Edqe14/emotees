@@ -7,6 +7,7 @@ import useInternal from '@/lib/hooks/useInternal';
 import Input from './Input';
 import startNewEmojiFlow from '@/lib/helpers/startNewEmojiFlow';
 import shortcutHandler from '@/lib/helpers/shortcutHandler';
+import openConfigModal from '@/lib/helpers/openConfigModal';
 
 export default function Toolbar() {
   const [search, setSearchQuery] = useInternal((s) => [s.searchQuery, s.setSearchQuery], shallow);
@@ -18,11 +19,13 @@ export default function Toolbar() {
   const inputRefs = useMergedRef(inputRef, ref);
 
   const newRef = useRef<HTMLButtonElement>(null);
+  const configRef = useRef<HTMLButtonElement>(null);
 
   useHotkeys([
     [';', shortcutHandler(() => inputRef.current?.focus())],
     ['mod+K', shortcutHandler(() => inputRef.current?.focus())],
     ['N', shortcutHandler(() => newRef.current?.click())],
+    ['mod+,', shortcutHandler(() => configRef.current?.click())],
   ]);
 
   useEffect(() => {
@@ -38,8 +41,7 @@ export default function Toolbar() {
         placeholder={focused ? 'Search' : 'Use ";" to search'}
       />
 
-      {/* TODO: options popup */}
-      <ActionIcon color="violet" variant="light" radius="xl">
+      <ActionIcon ref={configRef} onClick={openConfigModal} color="violet" variant="light" radius="xl">
         <IconAdjustments size={20} />
       </ActionIcon>
 
