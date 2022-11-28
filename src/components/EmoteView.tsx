@@ -1,4 +1,5 @@
 import { showNotification } from '@mantine/notifications';
+import { Tooltip } from '@mantine/core';
 import Emote from '@/lib/structs/Emote';
 import applyCustomNotificationOptions from '@/lib/helpers/applyCustomNotification';
 import Twemoji from './Twemoji';
@@ -44,13 +45,15 @@ export default function EmoteView({ name, file }: Emote) {
   };
 
   return (
-    <span onClick={onClick} className="w-16 p-2 rounded-md cursor-pointer hover:bg-slate-200 hover:dark:bg-slate-700 transition-colors duration-100 bg-opacity-50 flex items-center justify-center">
-      <img
-        key={name}
-        src={url}
-        alt={name}
-        className="w-full h-auto"
-      />
-    </span>
+    <Tooltip label={`:${name}:`} withArrow arrowSize={6} position="bottom" color="violet" openDelay={200}>
+      <span onClick={onClick} className="w-16 p-2 rounded-md cursor-pointer hover:bg-slate-200 hover:dark:bg-slate-700 transition-colors duration-100 bg-opacity-50 flex items-center justify-center">
+        <img
+          key={name}
+          src={url}
+          alt={name}
+          className="w-full h-auto"
+        />
+      </span>
+    </Tooltip>
   );
 }

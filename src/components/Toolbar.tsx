@@ -1,4 +1,4 @@
-import { ActionIcon } from '@mantine/core';
+import { ActionIcon, Tooltip } from '@mantine/core';
 import { useDebouncedValue, useFocusWithin, useHotkeys, useMergedRef } from '@mantine/hooks';
 import { IconAdjustments, IconPlus } from '@tabler/icons';
 import { useEffect, useRef, useState } from 'react';
@@ -41,13 +41,17 @@ export default function Toolbar() {
         placeholder={focused ? 'Search' : 'Use ";" to search'}
       />
 
-      <ActionIcon ref={configRef} onClick={openConfigModal} color="violet" variant="light" radius="xl">
-        <IconAdjustments size={20} />
-      </ActionIcon>
+      <Tooltip label="Settings" withArrow arrowSize={6} openDelay={200} color="violet">
+        <ActionIcon ref={configRef} onClick={openConfigModal} color="violet" variant="light" radius="xl">
+          <IconAdjustments size={20} />
+        </ActionIcon>
+      </Tooltip>
 
-      <ActionIcon ref={newRef} onClick={() => startNewEmojiFlow()} color="violet" variant="light" radius="xl">
-        <IconPlus size={20} />
-      </ActionIcon>
+      <Tooltip label="Add" withArrow arrowSize={6} openDelay={200} color="violet">
+        <ActionIcon ref={newRef} onClick={() => startNewEmojiFlow()} color="violet" variant="light" radius="xl">
+          <IconPlus size={20} />
+        </ActionIcon>
+      </Tooltip>
     </section>
   );
 }

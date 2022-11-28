@@ -10,7 +10,7 @@ export default function Navbar({ className }: { className?: string }) {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <nav className={concat('flex w-full items-center justify-between mb-8 transition-colors duration-100', className)}>
+    <nav className={concat('flex w-full items-center justify-between mb-8 transition-colors duration-100 z-[500]', className)}>
       <Logo />
 
       <section className="flex gap-4 items-center">
