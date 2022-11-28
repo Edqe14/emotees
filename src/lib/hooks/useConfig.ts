@@ -22,7 +22,7 @@ const useConfig = create(
     onlyShowFavorites: false,
     namePrefix: '',
     useFirebase: false,
-    autoSort: AutoSort.NAME,
+    autoSort: AutoSort.FAVORITE,
   }, (set) => ({
     setOnlyShowFavorites: (onlyShowFavorites: boolean) => set({ onlyShowFavorites }),
     setNamePrefix: (namePrefix: string) => set({ namePrefix }),
