@@ -32,6 +32,8 @@ export function EmojiInfo({ url, name }: { url: string; name?: string }) {
     },
   });
 
+  const inputRef = createRef<HTMLInputElement>();
+
   const onSubmit = form.onSubmit((value) => {
     useEmotes.getState().appendEmote({
       name: value.name,
@@ -68,6 +70,10 @@ export function EmojiInfo({ url, name }: { url: string; name?: string }) {
     }
   }, [form.errors]);
 
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [inputRef]);
+
   return (
     <section className="flex flex-col justify-center items-center">
       <Image
@@ -87,6 +93,7 @@ export function EmojiInfo({ url, name }: { url: string; name?: string }) {
           <span className="text-xl font-semibold">:</span>
 
           <Input
+            ref={inputRef}
             type="text"
             required
             placeholder="name"

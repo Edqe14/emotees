@@ -13,9 +13,8 @@ import Navbar from '@/components/Navbar';
 import useInternal from '@/lib/hooks/useInternal';
 import EmoteView from '@/components/EmoteView';
 import Toolbar from '@/components/Toolbar';
-
-import animeSad from '@/assets/notfound.png';
 import useConfig from '@/lib/hooks/useConfig';
+import NotFound from '@/components/NotFound';
 
 export default function Index() {
   const onlyShowFavorites = useConfig((s) => s.onlyShowFavorites);
@@ -67,13 +66,7 @@ export default function Index() {
 
       <section className="py-20 flex flex-wrap gap-2 justify-center">
         {prepedEmote}
-        {!prepedEmote.length && (
-          <section className="py-2">
-            <img src={animeSad} alt="sad anime girl" className="w-48 mb-4" />
-
-            <h2 className="text-lg font-medium italic">oh nyo! can&apos;t find anything</h2>
-          </section>
-        )}
+        {!prepedEmote.length && <NotFound />}
       </section>
       <Toolbar />
     </Layout>
