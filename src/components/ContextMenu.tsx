@@ -34,6 +34,8 @@ export default function ContextMenu() {
   useWindowEvent('click', close);
 
   useWindowEvent('contextmenu', (ev) => {
+    if (useInternal.getState().pasteLock) return;
+
     ev.preventDefault();
 
     setItems(null);
