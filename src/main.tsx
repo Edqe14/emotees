@@ -25,7 +25,7 @@ const Root = () => {
         fontFamily: 'Cabin, sans-serif',
       }}
     >
-      <ModalsProvider>
+      <ModalsProvider modalProps={{ zIndex: 350 }}>
         <NotificationsProvider>
           <BrowserRouter>
             <App />

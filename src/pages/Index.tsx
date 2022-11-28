@@ -2,6 +2,7 @@ import { useWindowEvent } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import { useLayoutEffect, useMemo } from 'react';
 
+import shallow from 'zustand/shallow';
 import Layout from '@/components/Layout';
 import isURL from '@/lib/helpers/isURL';
 import isDiscordEmojiURL from '@/lib/helpers/isDiscordEmojiURL';
@@ -13,11 +14,11 @@ import Navbar from '@/components/Navbar';
 import useInternal from '@/lib/hooks/useInternal';
 import EmoteView from '@/components/EmoteView';
 import Toolbar from '@/components/Toolbar';
-import useConfig from '@/lib/hooks/useConfig';
+import useConfig, { AutoSort } from '@/lib/hooks/useConfig';
 import NotFound from '@/components/NotFound';
 
 export default function Index() {
-  const onlyShowFavorites = useConfig((s) => s.onlyShowFavorites);
+  const [onlyShowFavorites, autoSort] = useConfig((s) => [s.onlyShowFavorites, s.autoSort], shallow);
   const emotes = useEmotes((s) => s.emotes);
   const searchTerm = useInternal((s) => s.searchQuery);
 
@@ -55,10 +56,18 @@ export default function Index() {
   const prepedEmote = useMemo(() => emotes
     .filter((e) => onlyShowFavorites ? e.favorite : true)
     .filter((e) => searchTerm ? e.name.includes(searchTerm) : true)
-    .sort((a, b) => b.totalUses - a.totalUses)
+    .sort((a, b) => {
+      if (autoSort === AutoSort.NAME_REVERSE) return b.name.localeCompare(a.name);
+      if (autoSort === AutoSort.FAVORITE) return Number(b.favorite) - Number(a.favorite);
+      if (autoSort === AutoSort.USES) return b.totalUses - a.totalUses;
+      if (autoSort === AutoSort.TIME) return b.addedAt - a.addedAt;
+      if (autoSort === AutoSort.TIME_REVERSE) return a.addedAt - b.addedAt;
+
+      return a.name.localeCompare(b.name);
+    })
     .map((emote) => (
       <EmoteView key={emote.name} {...emote} />
-    )), [searchTerm, emotes, onlyShowFavorites]);
+    )), [searchTerm, emotes, onlyShowFavorites, autoSort]);
 
   return (
     <Layout>
@@ -66,6 +75,7 @@ export default function Index() {
 
       <section className="py-20 flex flex-wrap gap-2 justify-center">
         {prepedEmote}
+
         {!prepedEmote.length && <NotFound />}
       </section>
       <Toolbar />
