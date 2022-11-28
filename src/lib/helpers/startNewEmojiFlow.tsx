@@ -12,7 +12,7 @@ import isURL from './isURL';
 import isDiscordEmojiURL from './isDiscordEmojiURL';
 import applyCustomNotificationOptions from './applyCustomNotification';
 
-export function EmojiInfo({ url, name }: { url: string; name?: string }) {
+export function EmojiInfo({ url, name, index }: { url: string; name?: string; index?: number }) {
   const modals = useModals();
   const form = useForm({
     initialValues: {
@@ -35,24 +35,39 @@ export function EmojiInfo({ url, name }: { url: string; name?: string }) {
   const inputRef = createRef<HTMLInputElement>();
 
   const onSubmit = form.onSubmit((value) => {
-    useEmotes.getState().appendEmote({
-      name: value.name,
-      file: url.match(/(\d+)\.(?:png|gif|jpg|jpeg|webp)/gi)?.[0] as string,
-      addedAt: Date.now(),
-      favorite: false,
-      totalUses: 0
-    });
+    if (!index) {
+      useEmotes.getState().appendEmote({
+        name: value.name,
+        file: url.match(/(\d+)\.(?:png|gif|jpg|jpeg|webp)/gi)?.[0] as string,
+        addedAt: Date.now(),
+        favorite: false,
+        totalUses: 0
+      });
 
-    showNotification({
-      id: 'emote-new-added',
-      title: (
-        <Twemoji>Yay 🎉</Twemoji>
-      ),
-      color: 'green',
-      message: (
-        <Twemoji>Added <span className="font-semibold text-slate-500 dark:text-slate-300">{value.name}</span> to the list.</Twemoji>
-      ),
-    });
+      showNotification({
+        id: 'emote-new-added',
+        title: (
+          <Twemoji>Yay 🎉</Twemoji>
+        ),
+        color: 'teal',
+        message: (
+          <Twemoji>Added <span className="font-semibold text-slate-500 dark:text-slate-300">{value.name}</span> to the list.</Twemoji>
+        ),
+      });
+    } else {
+      useEmotes.getState().updateEmote(index, () => ({ name: value.name }));
+
+      showNotification({
+        id: 'emote-new-updated',
+        title: (
+          <Twemoji>Yay 🎉</Twemoji>
+        ),
+        color: 'teal',
+        message: (
+          <Twemoji>Updated <span className="font-semibold text-slate-500 dark:text-slate-300">{value.name}</span>.</Twemoji>
+        ),
+      });
+    }
 
     modals.closeModal('emote-info');
   });

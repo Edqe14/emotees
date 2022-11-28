@@ -73,10 +73,14 @@ export default function Index() {
     <Layout>
       <Navbar className="fixed top-0 right-0 left-0 p-8 w-full lg:w-3/5 md:w-5/6 mx-auto bg-slate-50 dark:bg-gray-900" />
 
-      <section className="py-20 flex flex-wrap gap-2 justify-center">
-        {prepedEmote}
+      <section className="my-20">
+        {onlyShowFavorites && <h2 className="mb-3 font-bold text-lg italic text-center">Favorites only</h2>}
 
-        {!prepedEmote.length && <NotFound />}
+        <section className="flex flex-wrap gap-2 justify-center">
+          {prepedEmote}
+
+          {!prepedEmote.length && <NotFound />}
+        </section>
       </section>
       <Toolbar />
     </Layout>

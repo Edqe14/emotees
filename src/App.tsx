@@ -1,6 +1,7 @@
 import { useHotkeys } from '@mantine/hooks';
 import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import ContextMenu from './components/ContextMenu';
 import { loadConfigFromStorage } from './lib/hooks/useConfig';
 import { loadEmotesFromStorage } from './lib/hooks/useEmotes';
 import useTheme from './lib/hooks/useTheme';
@@ -26,8 +27,12 @@ export default function App() {
   }, []);
 
   return (
-    <Routes>
-      <Route path="/" element={<Index />} />
-    </Routes>
+    <>
+      <ContextMenu />
+
+      <Routes>
+        <Route path="/" element={<Index />} />
+      </Routes>
+    </>
   );
 }

@@ -10,10 +10,10 @@ export default function Navbar({ className }: { className?: string }) {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <nav className={concat('flex w-full items-center justify-between mb-8 transition-colors duration-100 z-[300]', className)}>
+    <nav className={concat('flex w-full items-center justify-between mb-8 transition-colors duration-100 z-[310] gap-4', className)}>
       <Logo />
 
-      <section className="flex gap-4 items-center">
+      <section className="flex gap-3 items-center">
         <ActionIcon onClick={() => navigate('/')} color="violet" variant="light" radius="xl">
           <IconMoodHappy size={20} />
         </ActionIcon>
