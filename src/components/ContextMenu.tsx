@@ -31,8 +31,8 @@ export default function ContextMenu() {
     }, closeDuration);
   };
 
+  useWindowEvent('blur', close);
   useWindowEvent('click', close);
-
   useWindowEvent('contextmenu', (ev) => {
     if (useInternal.getState().pasteLock) return;
 
