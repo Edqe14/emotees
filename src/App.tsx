@@ -1,5 +1,5 @@
 import { useHotkeys } from '@mantine/hooks';
-import { useEffect } from 'react';
+import { lazy, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import shallow from 'zustand/shallow';
 import ContextMenu from './components/ContextMenu';
@@ -8,7 +8,7 @@ import { loadEmotesFromFirebase, loadEmotesFromStorage } from './lib/hooks/useEm
 import useTheme from './lib/hooks/useTheme';
 import useUser from './lib/hooks/useUser';
 
-import Index from './pages/Index';
+const Index = lazy(() => import('./pages/Index'));
 
 export default function App() {
   const { toggleTheme } = useTheme();

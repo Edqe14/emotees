@@ -1,23 +1,24 @@
 import { useWindowEvent } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
-import { useLayoutEffect, useMemo } from 'react';
-
+import { lazy, Suspense, useLayoutEffect, useMemo } from 'react';
 import shallow from 'zustand/shallow';
-import Layout from '@/components/Layout';
+
 import isURL from '@/lib/helpers/isURL';
 import isDiscordEmojiURL from '@/lib/helpers/isDiscordEmojiURL';
 import applyCustomNotificationOptions from '@/lib/helpers/applyCustomNotification';
-import Twemoji from '@/components/Twemoji';
 import startNewEmojiFlow from '@/lib/helpers/startNewEmojiFlow';
 import useEmotes from '@/lib/hooks/useEmotes';
-import Navbar from '@/components/Navbar';
 import useInternal from '@/lib/hooks/useInternal';
-import EmoteView from '@/components/EmoteView';
-import Toolbar from '@/components/Toolbar';
 import useConfig, { AutoSort } from '@/lib/hooks/useConfig';
-import NotFound from '@/components/NotFound';
-import Loading from '@/components/Loading';
 import useUser from '@/lib/hooks/useUser';
+
+const Layout = lazy(() => import('@/components/Layout'));
+const Navbar = lazy(() => import('@/components/Navbar'));
+const Loading = lazy(() => import('@/components/Loading'));
+const NotFound = lazy(() => import('@/components/NotFound'));
+const Toolbar = lazy(() => import('@/components/Toolbar'));
+const EmoteView = lazy(() => import('@/components/EmoteView'));
+const Twemoji = lazy(() => import('@/components/Twemoji'));
 
 export default function Index() {
   const [onlyShowFavorites, autoSort] = useConfig((s) => [s.onlyShowFavorites, s.autoSort], shallow);
@@ -73,20 +74,22 @@ export default function Index() {
     )), [searchTerm, emotes, onlyShowFavorites, autoSort]);
 
   return (
-    <Layout>
-      <Navbar className="fixed top-0 right-0 left-0 p-8 w-full lg:w-3/5 md:w-5/6 mx-auto bg-slate-50 dark:bg-gray-900" />
+    <Suspense>
+      <Layout>
+        <Navbar className="fixed top-0 right-0 left-0 p-8 w-full lg:w-3/5 md:w-5/6 mx-auto bg-slate-50 dark:bg-gray-900" />
 
-      <section className="my-20">
-        {onlyShowFavorites && <h2 className="mb-3 font-bold text-lg italic text-center">Favorites only</h2>}
+        <section className="my-20">
+          {onlyShowFavorites && <h2 className="mb-3 font-bold text-lg italic text-center">Favorites only</h2>}
 
-        <section className="flex flex-wrap gap-2 justify-center">
-          {!loading && !userLoading && prepedEmote}
+          <section className="flex flex-wrap gap-2 justify-center">
+            {!loading && !userLoading && prepedEmote}
 
-          {!prepedEmote.length && !userLoading && !loading && <NotFound />}
-          {!prepedEmote.length && userLoading && loading && <Loading />}
+            {!prepedEmote.length && !userLoading && !loading && <NotFound />}
+            {!prepedEmote.length && userLoading && loading && <Loading />}
+          </section>
         </section>
-      </section>
-      <Toolbar />
-    </Layout>
+        <Toolbar />
+      </Layout>
+    </Suspense>
   );
 }
