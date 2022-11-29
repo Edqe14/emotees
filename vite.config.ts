@@ -15,8 +15,8 @@ export default defineConfig({
         name: 'Emotees',
         short_name: 'Emotees',
         orientation: 'portrait',
-        theme_color: '#f8fafc',
-        background_color: '#f8fafc',
+        theme_color: '#172e60',
+        background_color: '#111827',
         icons: [
           {
             src: '/assets/icons/manifest-icon-192.maskable.png',
