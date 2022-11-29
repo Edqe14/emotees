@@ -16,10 +16,13 @@ import EmoteView from '@/components/EmoteView';
 import Toolbar from '@/components/Toolbar';
 import useConfig, { AutoSort } from '@/lib/hooks/useConfig';
 import NotFound from '@/components/NotFound';
+import Loading from '@/components/Loading';
+import useUser from '@/lib/hooks/useUser';
 
 export default function Index() {
   const [onlyShowFavorites, autoSort] = useConfig((s) => [s.onlyShowFavorites, s.autoSort], shallow);
-  const emotes = useEmotes((s) => s.emotes);
+  const userLoading = useUser((s) => s.loading);
+  const [emotes, loading] = useEmotes((s) => [s.emotes, s.loading], shallow);
   const searchTerm = useInternal((s) => s.searchQuery);
 
   useWindowEvent('paste', (ev) => {
@@ -77,9 +80,10 @@ export default function Index() {
         {onlyShowFavorites && <h2 className="mb-3 font-bold text-lg italic text-center">Favorites only</h2>}
 
         <section className="flex flex-wrap gap-2 justify-center">
-          {prepedEmote}
+          {!loading && !userLoading && prepedEmote}
 
-          {!prepedEmote.length && <NotFound />}
+          {!prepedEmote.length && !userLoading && !loading && <NotFound />}
+          {!prepedEmote.length && userLoading && loading && <Loading />}
         </section>
       </section>
       <Toolbar />

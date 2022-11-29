@@ -17,6 +17,8 @@
     "@mantine/modals": "^5.8.3",
     "@mantine/notifications": "^5.8.3",
     "@tabler/icons": "^1.113.0",
+    "firebase": "^9.14.0",
+    "lodash-es": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-easy-emoji": "^1.8.0",
@@ -25,6 +27,7 @@
   },
   "devDependencies": {
     "@edqe/eslint-config": "^1.0.1",
+    "@types/lodash-es": "^4.17.6",
     "@types/react": "^18.0.22",
     "@types/react-dom": "^18.0.7",
     "@vitejs/plugin-react": "^2.2.0",

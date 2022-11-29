@@ -1,11 +1,8 @@
+import { pick } from 'lodash-es';
 import create from 'zustand';
 import { combine } from 'zustand/middleware';
-
-export type Config = {
-  onlyShowFavorites: boolean;
-  namePrefix: string;
-  useFirebase: boolean;
-};
+import { subscribeToUserConfigData, writeUserConfigData } from '../helpers/firebase/database';
+import useUser from './useUser';
 
 // eslint-disable-next-line no-shadow
 export enum AutoSort {
@@ -17,22 +14,33 @@ export enum AutoSort {
   TIME_REVERSE = 5
 }
 
+export type Config = {
+  onlyShowFavorites: boolean;
+  namePrefix: string;
+  autoSort: AutoSort;
+};
+
+export const DEFAULT_CONFIG: Config = {
+  onlyShowFavorites: false,
+  namePrefix: '',
+  autoSort: AutoSort.FAVORITE,
+};
+
 const useConfig = create(
-  combine({
-    onlyShowFavorites: false,
-    namePrefix: '',
-    useFirebase: false,
-    autoSort: AutoSort.FAVORITE,
-  }, (set) => ({
+  combine(DEFAULT_CONFIG, (set) => ({
     setOnlyShowFavorites: (onlyShowFavorites: boolean) => set({ onlyShowFavorites }),
     setNamePrefix: (namePrefix: string) => set({ namePrefix }),
-    setUseFirebase: (useFirebase: boolean) => set({ useFirebase }),
     setAutoSort: (autoSort: AutoSort) => set({ autoSort }),
   }))
 );
 
 useConfig.subscribe((config) => {
-  localStorage.setItem('config', JSON.stringify(config));
+  const user = useUser.getState();
+  if (user.loading) return;
+  if (!user.uid) return localStorage.setItem('config', JSON.stringify(config));
+
+  // Firebase
+  writeUserConfigData(user.uid, pick(config, Object.keys(DEFAULT_CONFIG)) as Config);
 });
 
 export const loadConfigFromStorage = () => {
@@ -53,7 +61,8 @@ export const loadConfigFromStorage = () => {
   } catch {
     return false;
   }
-
 };
+
+export const loadConfigFromFirebase = (userId: string) => subscribeToUserConfigData(userId, (data) => useConfig.setState(data));
 
 export default useConfig;
