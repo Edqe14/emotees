@@ -205,7 +205,7 @@ export default function EmoteView({ name, file, favorite }: Emote) {
         className="relative w-16 p-2 rounded-md cursor-pointer hover:bg-slate-200 hover:dark:bg-slate-700 transition-colors duration-100 bg-opacity-50 flex items-center justify-center"
       >
         {favorite && <IconStar className="drop-shadow text-yellow-500 fill-yellow-500 absolute top-0 right-0" size={18} />}
-        <img key={name} src={url} alt={name} className="w-full h-auto" />
+        <img loading="lazy" decoding="async" key={name} src={url} alt={name} className="w-full h-auto" />
       </span>
     </Tooltip>
   );
