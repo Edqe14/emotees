@@ -86,7 +86,7 @@ export default function Index() {
               {!loading && !userLoading && prepedEmote}
 
               {!prepedEmote.length && !userLoading && !loading && <NotFound />}
-              {!prepedEmote.length && userLoading && loading && <Loading />}
+              {!prepedEmote.length && (userLoading || loading) && <Loading />}
             </section>
           </Suspense>
         </section>
