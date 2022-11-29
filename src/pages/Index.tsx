@@ -1,8 +1,9 @@
 import { useWindowEvent } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
-import { lazy, Suspense, useLayoutEffect, useMemo } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useMemo } from 'react';
 import shallow from 'zustand/shallow';
 
+import { logEvent } from 'firebase/analytics';
 import isURL from '@/lib/helpers/isURL';
 import isDiscordEmojiURL from '@/lib/helpers/isDiscordEmojiURL';
 import applyCustomNotificationOptions from '@/lib/helpers/applyCustomNotification';
@@ -11,6 +12,7 @@ import useEmotes from '@/lib/hooks/useEmotes';
 import useInternal from '@/lib/hooks/useInternal';
 import useConfig, { AutoSort } from '@/lib/hooks/useConfig';
 import useUser from '@/lib/hooks/useUser';
+import analytics from '@/lib/helpers/firebase/analytics';
 
 const Layout = lazy(() => import('@/components/Layout'));
 const Navbar = lazy(() => import('@/components/Navbar'));
@@ -56,6 +58,13 @@ export default function Index() {
   useLayoutEffect(() => {
     window.scrollTo(0, useInternal.getState().scrollPosition);
   }, [emotes]);
+
+  useEffect(() => {
+    logEvent(analytics, 'page_view', {
+      page_title: document.title,
+      page_path: window.location.pathname,
+    });
+  }, []);
 
   const prepedEmote = useMemo(() => emotes
     .filter((e) => onlyShowFavorites ? e.favorite : true)

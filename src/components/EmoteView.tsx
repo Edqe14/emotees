@@ -8,6 +8,7 @@ import {
   IconTrash,
 } from '@tabler/icons';
 import { openModal } from '@mantine/modals';
+import { logEvent } from 'firebase/analytics';
 import Emote from '@/lib/structs/Emote';
 import applyCustomNotificationOptions from '@/lib/helpers/applyCustomNotification';
 import Twemoji from './Twemoji';
@@ -16,6 +17,7 @@ import useInternal from '@/lib/hooks/useInternal';
 import applyCustomModalOptions from '@/lib/helpers/applyCustomModalOptions';
 import { EmojiInfo } from '@/lib/helpers/startNewEmojiFlow';
 import sleep from '@/lib/helpers/sleep';
+import analytics from '@/lib/helpers/firebase/analytics';
 
 export default function EmoteView({ name, file, favorite }: Emote) {
   const setContextMenuItem = useInternal((s) => s.setContextMenuItems);
@@ -33,6 +35,10 @@ export default function EmoteView({ name, file, favorite }: Emote) {
       const index = emotes.findIndex((e) => e.name === name);
       if (index !== -1) {
         updateEmote(index, (current) => ({ totalUses: current.totalUses + 1 }));
+        logEvent(analytics, 'emote_copy', {
+          name,
+          total_uses: emotes[index].totalUses + 1,
+        });
       }
 
       return showNotification(
