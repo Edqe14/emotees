@@ -44,7 +44,7 @@ export function EmojiInfo({ url, name, index }: { url: string; name?: string; in
         totalUses: 0
       });
 
-      showNotification({
+      showNotification(applyCustomNotificationOptions({
         id: 'emote-new-added',
         title: (
           <Twemoji>Yay 🎉</Twemoji>
@@ -53,11 +53,11 @@ export function EmojiInfo({ url, name, index }: { url: string; name?: string; in
         message: (
           <Twemoji>Added <span className="font-semibold text-slate-500 dark:text-slate-300">{value.name}</span> to the list.</Twemoji>
         ),
-      });
+      }));
     } else {
       useEmotes.getState().updateEmote(index, () => ({ name: value.name }));
 
-      showNotification({
+      showNotification(applyCustomNotificationOptions({
         id: 'emote-new-updated',
         title: (
           <Twemoji>Yay 🎉</Twemoji>
@@ -66,7 +66,7 @@ export function EmojiInfo({ url, name, index }: { url: string; name?: string; in
         message: (
           <Twemoji>Updated <span className="font-semibold text-slate-500 dark:text-slate-300">{value.name}</span>.</Twemoji>
         ),
-      });
+      }));
     }
 
     modals.closeModal('emote-info');
@@ -74,14 +74,14 @@ export function EmojiInfo({ url, name, index }: { url: string; name?: string; in
 
   useEffect(() => {
     if (form.errors.name) {
-      showNotification({
+      showNotification(applyCustomNotificationOptions({
         id: 'emote-info-name-error',
         title: 'Oops, something went wrong',
         color: 'red',
         message: (
           <Twemoji>{form.errors.name as string}</Twemoji>
         ),
-      });
+      }));
     }
   }, [form.errors]);
 
