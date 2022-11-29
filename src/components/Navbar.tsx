@@ -32,6 +32,10 @@ export default function Navbar({ className }: { className?: string }) {
     }));
   };
 
+  const manageModal = () => {
+    // TODO: manage account
+  };
+
   return (
     <nav className={concat('flex w-full items-center justify-between mb-8 transition-colors duration-100 z-[310] gap-4', className)}>
       <Logo />
@@ -75,7 +79,7 @@ export default function Navbar({ className }: { className?: string }) {
 
             {uid && (
               <>
-                <Menu.Item onClick={() => auth.signOut()} icon={<IconSettings size={16} />}>Manage</Menu.Item>
+                <Menu.Item onClick={manageModal} icon={<IconSettings size={16} />}>Manage</Menu.Item>
                 <Menu.Item color="red" onClick={() => auth.signOut()} icon={<IconUserOff size={16} />}>Logout</Menu.Item>
               </>
             )}
