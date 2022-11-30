@@ -23,6 +23,7 @@
     "react-dom": "^18.2.0",
     "react-easy-emoji": "^1.8.0",
     "react-router-dom": "^6.4.3",
+    "yup": "^0.32.11",
     "zustand": "^4.1.4"
   },
   "devDependencies": {
