@@ -3,11 +3,13 @@ import { useDebouncedValue, useFocusWithin, useHotkeys, useMergedRef } from '@ma
 import { IconAdjustments, IconPlus } from '@tabler/icons';
 import { useEffect, useRef, useState } from 'react';
 import shallow from 'zustand/shallow';
+import { motion } from 'framer-motion';
 import useInternal from '@/lib/hooks/useInternal';
 import Input from './Input';
 import startNewEmojiFlow from '@/lib/helpers/startNewEmojiFlow';
 import shortcutHandler from '@/lib/helpers/shortcutHandler';
 import openConfigModal from '@/lib/helpers/openConfigModal';
+import useConfig from '@/lib/hooks/useConfig';
 
 export default function Toolbar() {
   const [search, setSearchQuery] = useInternal((s) => [s.searchQuery, s.setSearchQuery], shallow);
@@ -24,8 +26,9 @@ export default function Toolbar() {
   useHotkeys([
     [';', shortcutHandler(() => inputRef.current?.focus())],
     ['mod+K', shortcutHandler(() => inputRef.current?.focus())],
-    ['N', shortcutHandler(() => newRef.current?.click())],
+    ['mod+alt+N', shortcutHandler(() => newRef.current?.click())],
     ['mod+,', shortcutHandler(() => configRef.current?.click())],
+    ['mod+alt+F', shortcutHandler(() => useConfig.setState((s) => ({ onlyShowFavorites: !s.onlyShowFavorites })))],
   ]);
 
   useEffect(() => {
@@ -33,7 +36,13 @@ export default function Toolbar() {
   }, [debounced]);
 
   return (
-    <section className="flex gap-3 bg-slate-100 dark:bg-gray-800 shadow fixed bottom-0 right-0 left-1/2 -translate-x-1/2 p-3 w-min rounded-t-3xl items-center transition-all">
+    <motion.section
+      className="flex gap-3 bg-slate-100 dark:bg-gray-800 shadow fixed bottom-0 right-0 left-1/2 p-3 w-min rounded-t-3xl items-center transition-all"
+      initial={{ y: '200%', x: '-50%' }}
+      animate={{ y: '0%', x: '-50%' }}
+      exit={{ y: '200%', x: '-50%' }}
+      transition={{ duration: 0.25, ease: 'circIn' }}
+    >
       <Input
         ref={inputRefs}
         value={searchQuery}
@@ -52,6 +61,6 @@ export default function Toolbar() {
           <IconPlus size={20} />
         </ActionIcon>
       </Tooltip>
-    </section>
+    </motion.section>
   );
 }

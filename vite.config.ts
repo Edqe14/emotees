@@ -71,6 +71,16 @@ export default defineConfig({
                 maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
               }
             }
+          },
+          {
+            handler: 'CacheFirst',
+            urlPattern: /^https:\/\/twemoji\.maxcdn\.com\/.*/i,
+            options: {
+              cacheName: 'twemoji-cache',
+              expiration: {
+                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+              }
+            }
           }
         ]
       }

@@ -9,6 +9,8 @@ import {
 } from '@tabler/icons';
 import { openModal } from '@mantine/modals';
 import { logEvent } from 'firebase/analytics';
+import shallow from 'zustand/shallow';
+import { createRef } from 'react';
 import Emote from '@/lib/structs/Emote';
 import applyCustomNotificationOptions from '@/lib/helpers/applyCustomNotification';
 import Twemoji from './Twemoji';
@@ -20,9 +22,9 @@ import sleep from '@/lib/helpers/sleep';
 import analytics from '@/lib/helpers/firebase/analytics';
 
 export default function EmoteView({ name, file, favorite }: Emote) {
-  const setContextMenuItem = useInternal((s) => s.setContextMenuItems);
+  const [setContextMenuItem, setContextMenuPosition] = useInternal((s) => [s.setContextMenuItems, s.setContextMenuPosition], shallow);
   const setScrollPosition = useInternal((s) => s.setScrollPosition);
-  // const clipboard = useClipboard({ timeout: 200 });
+  const ref = createRef<HTMLSpanElement>();
   const url = `https://cdn.discordapp.com/emojis/${file}?size=48&quality=lossless`;
 
   const onClick = async () => {
@@ -43,7 +45,7 @@ export default function EmoteView({ name, file, favorite }: Emote) {
 
       return showNotification(
         applyCustomNotificationOptions({
-          title: 'Copied!',
+          title: <Twemoji>Copied 📋</Twemoji>,
           message: (
             <Twemoji>
               Successfully copied{' '}
@@ -172,6 +174,12 @@ export default function EmoteView({ name, file, favorite }: Emote) {
   const onContextMenu = async () => {
     await sleep();
 
+    if (ref.current) {
+      const rect = ref.current.getBoundingClientRect();
+
+      setContextMenuPosition([rect.left + rect.width / 2, rect.bottom + 5]);
+    }
+
     setContextMenuItem(
       <>
         <Menu.Divider />
@@ -206,6 +214,7 @@ export default function EmoteView({ name, file, favorite }: Emote) {
       color="violet"
       openDelay={200}>
       <span
+        ref={ref}
         onContextMenu={onContextMenu}
         onClick={onClick}
         className="relative w-16 p-2 rounded-md cursor-pointer hover:bg-slate-200 hover:dark:bg-slate-700 transition-colors duration-100 bg-opacity-50 flex items-center justify-center"

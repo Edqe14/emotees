@@ -1,10 +1,9 @@
-import { ActionIcon, Avatar, Button, Menu, Switch } from '@mantine/core';
+import { ActionIcon, Avatar, Button, Menu } from '@mantine/core';
 import { IconBasket, IconBrandGithub, IconBrandGoogle, IconBrandTwitter, IconFileExport, IconFileImport, IconMoodHappy, IconMoon, IconSettings, IconSun, IconTrash, IconUser, IconUserOff } from '@tabler/icons';
 import { useNavigate } from 'react-router-dom';
-import { openModal, useModals } from '@mantine/modals';
+import { openConfirmModal, openModal, useModals } from '@mantine/modals';
 import shallow from 'zustand/shallow';
 import { showNotification } from '@mantine/notifications';
-import { useState } from 'react';
 import useTheme from '@/lib/hooks/useTheme';
 import Logo from '@/components/Logo';
 import concat from '@/lib/helpers/concat';
@@ -14,48 +13,8 @@ import auth, { login } from '@/lib/helpers/firebase/auth';
 import useEmotes from '@/lib/hooks/useEmotes';
 import Twemoji from './Twemoji';
 import Emote, { EmoteValidator } from '@/lib/structs/Emote';
-import applyCustomNotificationOptions from '@/lib/helpers/applyCustomNotification';
-
-const ImportEmoteContent = ({ emotes }: { emotes: Emote[] }) => {
-  const modals = useModals();
-  const [override, setOverride] = useState(false);
-
-  const importEmotes = () => {
-    const { setEmotes } = useEmotes.getState();
-    let dupes = 0;
-
-    if (override) setEmotes(emotes);
-    else {
-      const all = useEmotes.getState().emotes;
-      const clearedDupe = emotes.filter((e) => !all.some((a) => a.name === e.name));
-
-      useEmotes.setState((curr) => ({ emotes: [...curr.emotes, ...clearedDupe] }));
-      dupes = emotes.length - clearedDupe.length;
-    };
-
-    showNotification(applyCustomNotificationOptions({
-      title: <Twemoji>Imported 🎉</Twemoji>,
-      message: <Twemoji>Successfuly imported <span className="font-semibold text-slate-500 dark:text-slate-300">{emotes.length - dupes}</span> emotes 😊 {dupes && <span className="italic">({dupes} dupes)</span>}</Twemoji>,
-      color: 'teal'
-    }));
-
-    modals.closeAll();
-  };
-
-  return (
-    <section>
-      <p className="mb-3">You&apos;re going to import <span className="font-semibold">{emotes.length}</span> emotes.</p>
-      <Switch className="flex mb-4" checked={override} onChange={(ev) => setOverride(ev.target.checked)} label="Override" />
-
-      <p className="text-lg font-medium text-red-500 text-center mb-3">This action is not undo-able!</p>
-
-      <section className="flex gap-3 items-center justify-center">
-        <Button variant="outline" color="red" onClick={() => modals.closeModal('import-confirm-modal')}>Nevermind</Button>
-        <Button color="violet" onClick={importEmotes}>Import</Button>
-      </section>
-    </section>
-  );
-};
+import EmoteImporter from './EmoteImporter';
+import getConfirmation from '@/lib/helpers/getConfirmation';
 
 export default function Navbar({ className }: { className?: string }) {
   const [uid, photo] = useUser((s) => [s.uid, s.photoURL], shallow);
@@ -80,7 +39,7 @@ export default function Navbar({ className }: { className?: string }) {
     }));
   };
 
-  const exportEmotes = () => {
+  const toFile = () => {
     const { emotes } = useEmotes.getState();
 
     const data = JSON.stringify(emotes);
@@ -93,11 +52,58 @@ export default function Navbar({ className }: { className?: string }) {
 
     URL.revokeObjectURL(el.href);
 
+    modals.closeAll();
+
     showNotification({
       title: <Twemoji>Exported ✨</Twemoji>,
       message: <p>Exported <span className="font-semibold text-slate-500 dark:text-slate-300">{emotes.length}</span> emotes.</p>,
       color: 'teal'
     });
+  };
+
+  const toLocalStorage = async () => {
+    if (window.localStorage.getItem('emotes')) {
+      const confirm = await getConfirmation(applyCustomModalOptions({
+        modalId: 'confirm-overwrite',
+        centered: true,
+        title: <Twemoji>One moment! 🤨</Twemoji>,
+        children: <p>It looks like you already have emotes in your local storage. Would you like to overwrite them?</p>,
+        confirmProps: {
+          color: 'violet',
+        },
+        labels: {
+          confirm: 'Do it!',
+          cancel: 'Nevermind'
+        }
+      }));
+
+      if (!confirm) return;
+    }
+
+    const { emotes } = useEmotes.getState();
+
+    const data = JSON.stringify(emotes);
+    window.localStorage.setItem('emotes', data);
+
+    showNotification({
+      title: <Twemoji>Exported ✨</Twemoji>,
+      message: <p>Exported <span className="font-semibold text-slate-500 dark:text-slate-300">{emotes.length}</span> emotes.</p>,
+      color: 'teal'
+    });
+  };
+
+  const exportEmotes = () => {
+    openModal(applyCustomModalOptions({
+      modalId: 'export-modal',
+      centered: true,
+      title: <Twemoji>Backing up! 🔥</Twemoji>,
+      children: (
+        <section className="flex items-center gap-3">
+          <Button color="teal" fullWidth onClick={toFile}>Export to file</Button>
+          <Button color="violet" fullWidth onClick={toLocalStorage}>Export to local storage</Button>
+        </section>
+      ),
+    }));
   };
 
   // IMPORTING
@@ -129,7 +135,7 @@ export default function Navbar({ className }: { className?: string }) {
           modalId: 'import-confirm-modal',
           title: <Twemoji>Are you sure? 🤔</Twemoji>,
           centered: true,
-          children: (<ImportEmoteContent emotes={filtered} />),
+          children: (<EmoteImporter emotes={filtered} />),
         }));
       } catch {
         showNotification({
@@ -174,7 +180,7 @@ export default function Navbar({ className }: { className?: string }) {
         modalId: 'import-confirm-modal',
         title: <Twemoji>Are you sure? 🤔</Twemoji>,
         centered: true,
-        children: (<ImportEmoteContent emotes={filtered} />),
+        children: (<EmoteImporter emotes={filtered} />),
       }));
     } catch {
       showNotification({
@@ -199,6 +205,35 @@ export default function Navbar({ className }: { className?: string }) {
     }));
   };
 
+  const clearAll = () => {
+    openConfirmModal(applyCustomModalOptions({
+      modalId: 'clear-all-modal',
+      centered: true,
+      title: <Twemoji>Are you sure? 😣</Twemoji>,
+      children: (
+        <p>There is no turning back!</p>
+      ),
+      labels: {
+        cancel: 'Nevermind',
+        confirm: 'Do it!'
+      },
+      confirmProps: {
+        color: 'red',
+        variant: 'outline'
+      },
+      onConfirm: () => {
+        modals.closeAll();
+        useEmotes.getState().setEmotes([]);
+
+        showNotification({
+          title: <Twemoji>Cleared ✨</Twemoji>,
+          message: 'Cleared all emotes.',
+          color: 'teal'
+        });
+      }
+    }));
+  };
+
   const manageModal = () => {
     openModal(applyCustomModalOptions({
       modalId: 'manage-modal',
@@ -218,7 +253,7 @@ export default function Navbar({ className }: { className?: string }) {
             </section>
 
             <section className="flex items-center justify-center">
-              <Button color="red" rightIcon={<IconTrash size={18} />}>Clear all</Button>
+              <Button color="red" rightIcon={<IconTrash size={18} />} onClick={clearAll}>Clear all</Button>
             </section>
           </section>
         </section>
@@ -244,7 +279,6 @@ export default function Navbar({ className }: { className?: string }) {
           {theme === 'light' && <IconMoon size={20} />}
         </ActionIcon>
 
-        {/* TODO: avatar? */}
         <Menu
           withArrow
           withinPortal
