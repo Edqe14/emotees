@@ -74,15 +74,14 @@ export default function Navbar({ className }: { className?: string }) {
           </Menu.Target>
 
           <Menu.Dropdown>
+            <Menu.Item onClick={manageModal} icon={<IconSettings size={16} />}>Manage</Menu.Item>
+
             {!uid && (
               <Menu.Item onClick={loginModal} icon={<IconUser size={16} />}>Login</Menu.Item>
             )}
 
             {uid && (
-              <>
-                <Menu.Item onClick={manageModal} icon={<IconSettings size={16} />}>Manage</Menu.Item>
-                <Menu.Item color="red" onClick={() => auth.signOut()} icon={<IconUserOff size={16} />}>Logout</Menu.Item>
-              </>
+              <Menu.Item color="red" onClick={() => auth.signOut()} icon={<IconUserOff size={16} />}>Logout</Menu.Item>
             )}
           </Menu.Dropdown>
         </Menu>
