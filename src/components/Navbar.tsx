@@ -1,5 +1,5 @@
 import { ActionIcon, Avatar, Button, Menu } from '@mantine/core';
-import { IconBasket, IconBrandGithub, IconBrandGoogle, IconMoodHappy, IconMoon, IconSettings, IconSun, IconUser, IconUserOff } from '@tabler/icons';
+import { IconBasket, IconBrandGithub, IconBrandGoogle, IconBrandTwitter, IconMoodHappy, IconMoon, IconSettings, IconSun, IconUser, IconUserOff } from '@tabler/icons';
 import { useNavigate } from 'react-router-dom';
 import { openModal, useModals } from '@mantine/modals';
 import shallow from 'zustand/shallow';
@@ -25,8 +25,9 @@ export default function Navbar({ className }: { className?: string }) {
       centered: true,
       children: (
         <section className="flex flex-col items-center gap-2">
-          <Button onClick={async () => { await login('google'); closeModal(); }}>Continue with <IconBrandGoogle className="ml-2" size={20} /></Button>
+          <Button color="teal" onClick={async () => { await login('google'); closeModal(); }}>Continue with <IconBrandGoogle className="ml-2" size={20} /></Button>
           <Button color="violet" onClick={async () => { await login('github'); closeModal(); }}>Continue with <IconBrandGithub className="ml-2" size={20} /></Button>
+          <Button color="blue" onClick={async () => { await login('twitter'); closeModal(); }}>Continue with <IconBrandTwitter className="ml-2" size={20} /></Button>
         </section>
       )
     }));
