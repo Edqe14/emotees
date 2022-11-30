@@ -46,6 +46,33 @@ export default defineConfig({
       },
       workbox: {
         clientsClaim: true,
+        skipWaiting: true,
+        runtimeCaching: [
+          {
+            handler: 'StaleWhileRevalidate',
+            urlPattern: /\//,
+          },
+          {
+            handler: 'CacheFirst',
+            urlPattern: /\/assets/,
+            options: {
+              cacheName: 'assets',
+              expiration: {
+                maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
+              }
+            }
+          },
+          {
+            handler: 'CacheFirst',
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            options: {
+              cacheName: 'google-fonts',
+              expiration: {
+                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+              }
+            }
+          }
+        ]
       }
     })
   ]
