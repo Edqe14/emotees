@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import shallow from 'zustand/shallow';
 import ContextMenu from './components/ContextMenu';
+import HelpMenu from './components/HelpMenu';
 import Navbar from './components/Navbar';
 import Toolbar from './components/Toolbar';
 import { loadConfigFromFirebase, loadConfigFromStorage } from './lib/hooks/useConfig';
@@ -42,6 +43,7 @@ export default function App() {
   return (
     <>
       <ContextMenu />
+      <HelpMenu />
 
       <Navbar className="fixed top-0 right-0 left-0 p-8 w-full lg:w-3/5 md:w-5/6 mx-auto bg-slate-50 dark:bg-gray-900" />
 

@@ -81,15 +81,13 @@ export default function Index() {
 
   return (
     <Layout>
-      <section className="my-20">
-        {onlyShowFavorites && <h2 className="mb-3 font-bold text-lg italic text-center">Favorites only</h2>}
+      {onlyShowFavorites && <h2 className="mb-3 font-bold text-lg italic text-center">Favorites only</h2>}
 
-        <section className="flex flex-wrap gap-2 justify-center">
-          {!loading && !userLoading && prepedEmote}
+      <section className="flex flex-wrap gap-2 justify-center">
+        {!loading && !userLoading && prepedEmote}
 
-          {!prepedEmote.length && !userLoading && !loading && <NotFound />}
-          {!prepedEmote.length && (userLoading || loading) && <Loading />}
-        </section>
+        {!prepedEmote.length && !userLoading && !loading && <NotFound />}
+        {!prepedEmote.length && (userLoading || loading) && <Loading />}
       </section>
     </Layout>
   );

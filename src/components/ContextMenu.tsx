@@ -5,6 +5,7 @@ import { IconMoon, IconSun } from '@tabler/icons';
 import { createRef } from 'react';
 import useInternal from '@/lib/hooks/useInternal';
 import useTheme from '@/lib/hooks/useTheme';
+import getOSModKey from '@/lib/helpers/getOSModKey';
 
 export default function ContextMenu() {
   const width = 240;
@@ -74,7 +75,7 @@ export default function ContextMenu() {
           }
           rightSection={
             <Text color="dimmed" size="xs">
-              Ctrl + J
+              {getOSModKey()} + J
             </Text>
           }>
           Toggle Theme
