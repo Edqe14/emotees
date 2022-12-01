@@ -262,7 +262,7 @@ export default function Navbar({ className }: { className?: string }) {
   };
 
   return (
-    <nav className={concat('flex w-full items-center justify-between mb-8 transition-colors duration-100 z-[310] gap-4', className)}>
+    <nav className={concat('bg-slate-50 dark:bg-gray-900 flex w-full items-center justify-between mb-8 transition-colors duration-100 z-[310] gap-4', className)}>
       <Logo />
 
       <section className="flex gap-3 items-center">

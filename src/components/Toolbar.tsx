@@ -37,7 +37,7 @@ export default function Toolbar() {
 
   return (
     <motion.section
-      className="flex gap-3 bg-slate-100 dark:bg-gray-800 shadow fixed bottom-0 right-0 left-1/2 p-3 w-min rounded-t-3xl items-center transition-all"
+      className="flex gap-3 bg-slate-100 dark:bg-gray-800 z-50 shadow fixed bottom-0 right-0 left-1/2 p-3 w-min rounded-t-3xl items-center transition-all"
       initial={{ y: '200%', x: '-50%' }}
       animate={{ y: '0%', x: '-50%' }}
       exit={{ y: '200%', x: '-50%' }}
