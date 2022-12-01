@@ -6,7 +6,7 @@ interface Props {
 }
 
 export function Emoji({ code, emoji }: { code: string; emoji?: string }) {
-  return <img src={`https://twemoji.maxcdn.com/2/svg/${code}.svg`} alt={emoji} className="h-[1em] inline-block my-0 mx-[.1em] align-[-0.1em]" />;
+  return <img src={`https://twemoji.maxcdn.com/2/svg/${code}.svg`} alt={emoji} className="h-[1em] inline-block my-0 mx-[.2em]" />;
 }
 
 export default function Twemoji({ children }: Props) {
