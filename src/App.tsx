@@ -12,6 +12,7 @@ import { loadEmotesFromFirebase, loadEmotesFromStorage } from './lib/hooks/useEm
 import useTheme from './lib/hooks/useTheme';
 import useUser from './lib/hooks/useUser';
 import Index from './pages/Index';
+import Store from './pages/Store';
 
 export default function App() {
   const { toggleTheme } = useTheme();
@@ -54,6 +55,7 @@ export default function App() {
       <AnimatePresence initial={false} mode="wait">
         <Routes key={location.pathname} location={location}>
           <Route path="/" element={<Index />} />
+          <Route path="/store" element={<Store />} />
         </Routes>
       </AnimatePresence>
     </>
