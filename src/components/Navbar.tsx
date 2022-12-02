@@ -1,9 +1,10 @@
 import { ActionIcon, Avatar, Button, Menu } from '@mantine/core';
-import { IconBasket, IconBrandGithub, IconBrandGoogle, IconBrandTwitter, IconFileExport, IconFileImport, IconMoodHappy, IconMoon, IconSettings, IconSun, IconTrash, IconUser, IconUserOff } from '@tabler/icons';
+import { IconBasket, IconBrandGithub, IconBrandGoogle, IconBrandTwitter, IconFileExport, IconFileImport, IconMoodHappy, IconMoon, IconQuestionMark, IconSettings, IconSun, IconTrash, IconUser, IconUserOff } from '@tabler/icons';
 import { useNavigate } from 'react-router-dom';
 import { openConfirmModal, openModal, useModals } from '@mantine/modals';
 import shallow from 'zustand/shallow';
 import { showNotification } from '@mantine/notifications';
+import { useHotkeys } from '@mantine/hooks';
 import useTheme from '@/lib/hooks/useTheme';
 import Logo from '@/components/Logo';
 import concat from '@/lib/helpers/concat';
@@ -15,6 +16,9 @@ import Twemoji from './Twemoji';
 import Emote, { EmoteValidator } from '@/lib/structs/Emote';
 import EmoteImporter from './EmoteImporter';
 import getConfirmation from '@/lib/helpers/getConfirmation';
+import HelpMenu from './HelpMenu';
+import shortcutHandler from '@/lib/helpers/shortcutHandler';
+import useInternal from '@/lib/hooks/useInternal';
 
 export default function Navbar({ className }: { className?: string }) {
   const [uid, photo] = useUser((s) => [s.uid, s.photoURL], shallow);
@@ -261,6 +265,25 @@ export default function Navbar({ className }: { className?: string }) {
     }));
   };
 
+  const openHelp = () => {
+    useInternal.setState({ pasteLock: true, shortcutLock: true });
+
+    openModal(applyCustomModalOptions({
+      title: <Twemoji>Need help? 💁</Twemoji>,
+      centered: true,
+      size: 'lg',
+      classNames: {
+        header: 'mb-3',
+      },
+      children: <HelpMenu />,
+      onClose: () => useInternal.setState({ pasteLock: false, shortcutLock: false })
+    }));
+  };
+
+  useHotkeys([
+    ['mod+/', shortcutHandler(openHelp)],
+  ]);
+
   return (
     <nav className={concat('bg-slate-50 dark:bg-gray-900 flex w-full items-center justify-between mb-8 transition-colors duration-100 z-[310] gap-4', className)}>
       <Logo />
@@ -277,6 +300,10 @@ export default function Navbar({ className }: { className?: string }) {
         <ActionIcon color="violet" variant="light" radius="xl" onClick={toggleTheme}>
           {theme === 'dark' && <IconSun size={20} />}
           {theme === 'light' && <IconMoon size={20} />}
+        </ActionIcon>
+
+        <ActionIcon color="violet" variant="light" radius="xl" onClick={openHelp}>
+          <IconQuestionMark size={20} />
         </ActionIcon>
 
         <Menu

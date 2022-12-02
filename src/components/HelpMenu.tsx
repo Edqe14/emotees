@@ -1,14 +1,9 @@
-import { useHotkeys } from '@mantine/hooks';
-import { openModal } from '@mantine/modals';
 import { Accordion, ActionIcon, Kbd, List } from '@mantine/core';
 import { Icon3dCubeSphere, IconPlus } from '@tabler/icons';
-import applyCustomModalOptions from '@/lib/helpers/applyCustomModalOptions';
 import Twemoji from './Twemoji';
-import shortcutHandler from '@/lib/helpers/shortcutHandler';
-import useInternal from '@/lib/hooks/useInternal';
 import getOSModKey from '@/lib/helpers/getOSModKey';
 
-function HelpMainContent(){
+export default function HelpMenu(){
   return (
     <Accordion
       defaultValue="getting-started"
@@ -109,27 +104,4 @@ function HelpMainContent(){
       </Accordion.Item>
     </Accordion>
   );
-}
-
-export default function HelpMenu() {
-  const open = () => {
-    useInternal.setState({ pasteLock: true, shortcutLock: true });
-
-    openModal(applyCustomModalOptions({
-      title: <Twemoji>Need help? 💁</Twemoji>,
-      centered: true,
-      size: 'lg',
-      classNames: {
-        header: 'mb-3',
-      },
-      children: <HelpMainContent />,
-      onClose: () => useInternal.setState({ pasteLock: false, shortcutLock: false })
-    }));
-  };
-
-  useHotkeys([
-    ['mod+/', shortcutHandler(open)],
-  ]);
-
-  return null;
 }

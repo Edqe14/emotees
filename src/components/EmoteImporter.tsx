@@ -9,13 +9,13 @@ import Twemoji from './Twemoji';
 
 export default function EmoteImporter({ emotes }: { emotes: Emote[] }) {
   const modals = useModals();
-  const [override, setOverride] = useState(false);
+  const [overwrite, setOverwrite] = useState(false);
 
   const importEmotes = () => {
     const { setEmotes } = useEmotes.getState();
     let dupes = 0;
 
-    if (override) setEmotes(emotes);
+    if (overwrite) setEmotes(emotes);
     else {
       const all = useEmotes.getState().emotes;
       const clearedDupe = emotes.filter((e) => !all.some((a) => a.name === e.name));
@@ -36,7 +36,7 @@ export default function EmoteImporter({ emotes }: { emotes: Emote[] }) {
   return (
     <section>
       <p className="mb-3">You&apos;re going to import <span className="font-semibold">{emotes.length}</span> emotes.</p>
-      <Switch className="flex mb-4" checked={override} onChange={(ev) => setOverride(ev.target.checked)} label="Override" />
+      <Switch className="flex mb-4" checked={overwrite} onChange={(ev) => setOverwrite(ev.target.checked)} label="Overwrite" />
 
       <p className="text-lg font-medium text-red-500 text-center mb-3">This action is not undo-able!</p>
 
