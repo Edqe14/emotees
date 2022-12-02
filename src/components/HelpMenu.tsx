@@ -1,4 +1,4 @@
-import { Accordion, ActionIcon, Kbd, List } from '@mantine/core';
+import { Accordion, ActionIcon, Kbd, List, Text } from '@mantine/core';
 import { Icon3dCubeSphere, IconPlus } from '@tabler/icons';
 import Twemoji from './Twemoji';
 import getOSModKey from '@/lib/helpers/getOSModKey';
@@ -36,6 +36,7 @@ export default function HelpMenu(){
             <List.Item>Search & Sort by</List.Item>
             <List.Item>Toggleable theme</List.Item>
             <List.Item>Emote syncing</List.Item>
+            <List.Item>Import & Export</List.Item>
             <List.Item>Store</List.Item>
           </List>
         </Accordion.Panel>
@@ -66,6 +67,19 @@ export default function HelpMenu(){
 
         <Accordion.Panel>
           You can login using <Kbd>Google</Kbd>, <Kbd>Twitter</Kbd>, or <Kbd>Github</Kbd> to enable syncing between devices. This will allow you to access your emotes on any device, powered by <a href="https://firebase.google.com/" target="_blank" rel="noreferrer" className="text-blue-500">Firebase</a>!.
+        </Accordion.Panel>
+      </Accordion.Item>
+
+      <Accordion.Item value="export-import">
+        <Accordion.Control>
+          <Twemoji>
+            📤 Exporting & Importing
+          </Twemoji>
+        </Accordion.Control>
+
+        <Accordion.Panel>
+          <p className="mb-3">You can export your emotes as a <code>.json</code> file, or import emotes from a <code>.json</code> file. This is useful if you want to backup your emotes, or if you want to import emotes from another device with no internet.</p>
+          <p>You can do this by opening <Kbd>Manage</Kbd> menu <Text italic className="inline" color="dimmed">(by clicking the avatar icon on the top right part)</Text> and follow the instructions there.</p>
         </Accordion.Panel>
       </Accordion.Item>
 
