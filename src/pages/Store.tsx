@@ -131,7 +131,7 @@ export default function Store() {
 
       {loading && <Loading />}
       {!loading && !items.length && <NotFound />}
-      {!loading && items.length && (
+      {!loading && !!items.length && (
         <section className="grid gap-4 grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3">
           {items.map((item) => <StoreEntry {...item} key={item.id} />)}
         </section>

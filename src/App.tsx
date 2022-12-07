@@ -44,7 +44,7 @@ export default function App() {
     <>
       <ContextMenu />
 
-      <Navbar className="fixed top-0 right-0 left-0 p-8 w-full lg:w-3/5 md:w-5/6 mx-auto bg-slate-50 dark:bg-gray-900" />
+      <Navbar className="fixed top-0 right-0 left-0 p-8 w-full xl:w-3/5 lg:w-5/6 mx-auto bg-slate-50 dark:bg-gray-900" />
 
       <AnimatePresence>
         {location.pathname === '/' && <Toolbar />}
