@@ -15,10 +15,15 @@ export default function EmoteImporter({ emotes }: { emotes: Emote[] }) {
     const { setEmotes } = useEmotes.getState();
     let dupes = 0;
 
-    if (overwrite) setEmotes(emotes);
+    const mappedEmote = emotes.map((e) => ({
+      ...e,
+      addedAt: Date.now(),
+    }));
+
+    if (overwrite) setEmotes(mappedEmote);
     else {
       const all = useEmotes.getState().emotes;
-      const clearedDupe = emotes.filter((e) => !all.some((a) => a.name === e.name));
+      const clearedDupe = mappedEmote.filter((e) => !all.some((a) => a.name === e.name));
 
       useEmotes.setState((curr) => ({ emotes: [...curr.emotes, ...clearedDupe] }));
       dupes = emotes.length - clearedDupe.length;
@@ -26,7 +31,7 @@ export default function EmoteImporter({ emotes }: { emotes: Emote[] }) {
 
     showNotification(applyCustomNotificationOptions({
       title: <Twemoji>Imported 🎉</Twemoji>,
-      message: <Twemoji>Successfuly imported <span className="font-semibold text-slate-500 dark:text-slate-300">{emotes.length - dupes}</span> emotes 😊 {dupes && <span className="italic">({dupes} dupes)</span>}</Twemoji>,
+      message: <Twemoji>Successfuly imported <span className="font-semibold text-slate-500 dark:text-slate-300">{emotes.length - dupes}</span> emotes 😊 {dupes !== 0 && <span className="italic">({dupes} dupes)</span>}</Twemoji>,
       color: 'teal'
     }));
 

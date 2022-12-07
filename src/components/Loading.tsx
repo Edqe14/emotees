@@ -1,9 +1,9 @@
 export default function Loading() {
   return (
-    <section className="py-2">
+    <section className="py-2 flex flex-col items-center">
       <video src="/assets/loading.webm" preload="auto" playsInline muted autoPlay loop draggable={false} className="w-48 mb-4" />
 
-      <h2 className="text-lg text-center font-medium italic select-none">loading...</h2>
+      <h2 className="text-lg font-medium italic select-none">loading...</h2>
     </section>
   );
 }
