@@ -18,6 +18,8 @@ export default function EmoteImporter({ emotes }: { emotes: Emote[] }) {
     const mappedEmote = emotes.map((e) => ({
       ...e,
       addedAt: Date.now(),
+      totalUses: e.totalUses ?? 0,
+      favorite: e.favorite ?? false,
     }));
 
     if (overwrite) setEmotes(mappedEmote);

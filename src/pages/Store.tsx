@@ -12,7 +12,7 @@ import applyCustomModalOptions from '@/lib/helpers/applyCustomModalOptions';
 import Dropzone from '@/components/Dropzone';
 import getFileRejectionMessasge from '@/lib/helpers/getFileRejectionMessage';
 import useStore from '@/lib/hooks/useStore';
-import Emote, { EmoteValidator } from '@/lib/structs/Emote';
+import Emote, { EmoteValidatorPublishing } from '@/lib/structs/Emote';
 import { uploadFile } from '@/lib/helpers/firebase/storage';
 import database from '@/lib/helpers/firebase/database';
 import StoreEntry from '@/components/StoreEntry';
@@ -30,7 +30,7 @@ function PublishStoreContent() {
     validate: {
       content: (value) => {
         try {
-          return !JSON.parse(value)?.some((val: Emote) => EmoteValidator.isValidSync(val)) && 'Invalid emote content';
+          return !JSON.parse(value)?.some((val: Emote) => EmoteValidatorPublishing.isValidSync(val)) && 'Invalid emote content';
         } catch {
           return 'Invalid JSON';
         }
