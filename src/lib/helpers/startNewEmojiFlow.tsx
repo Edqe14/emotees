@@ -35,7 +35,7 @@ export function EmojiInfo({ url, name, index }: { url: string; name?: string; in
   const inputRef = createRef<HTMLInputElement>();
 
   const onSubmit = form.onSubmit((value) => {
-    if (!index) {
+    if (index === undefined || index === null) {
       useEmotes.getState().appendEmote({
         name: value.name,
         file: url.match(/(\d+)\.(?:png|gif|jpg|jpeg|webp)/gi)?.[0] as string,
