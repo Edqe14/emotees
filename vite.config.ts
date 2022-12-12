@@ -6,6 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  resolve: { alias: { '@': '/src' } },
   plugins: [
     tsconfigPaths(),
     react(),
@@ -85,5 +86,10 @@ export default defineConfig({
         ]
       }
     })
-  ]
+  ],
+  server: {
+    host: true,
+    strictPort: true,
+    port: 5173,
+  }
 });
