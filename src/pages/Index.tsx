@@ -58,8 +58,8 @@ export default function Index() {
 
   useEffect(() => {
     logEvent(analytics, 'page_view', {
-      page_title: document.title,
-      page_path: window.location.pathname,
+      page_title: 'home',
+      page_path: '/',
     });
   }, []);
 

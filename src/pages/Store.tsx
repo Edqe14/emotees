@@ -5,6 +5,8 @@ import type { FileRejection } from 'react-dropzone';
 import { useForm } from '@mantine/form';
 import { ref, set } from 'firebase/database';
 import { nanoid } from 'nanoid';
+import { useEffect } from 'react';
+import { logEvent } from 'firebase/analytics';
 import Layout from '@/components/Layout';
 import useUser from '@/lib/hooks/useUser';
 import Twemoji from '@/components/Twemoji';
@@ -18,6 +20,7 @@ import database from '@/lib/helpers/firebase/database';
 import StoreEntry from '@/components/StoreEntry';
 import Loading from '@/components/Loading';
 import NotFound from '@/components/NotFound';
+import analytics from '@/lib/helpers/firebase/analytics';
 
 function PublishStoreContent() {
   const modals = useModals();
@@ -110,6 +113,13 @@ function PublishStoreContent() {
 export default function Store() {
   const user = useUser((s) => s.uid);
   const { items, loading } = useStore();
+
+  useEffect(() => {
+    logEvent(analytics, 'page_view', {
+      page_title: 'store',
+      page_path: '/store',
+    });
+  }, []);
 
   const openPublishModal = () => {
     openModal(applyCustomModalOptions({

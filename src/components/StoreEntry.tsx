@@ -3,6 +3,7 @@ import { IconPlus, IconTrash } from '@tabler/icons';
 import { openModal } from '@mantine/modals';
 import { ref, remove } from 'firebase/database';
 import { showNotification } from '@mantine/notifications';
+import { logEvent } from 'firebase/analytics';
 import { StoreItem } from '@/lib/hooks/useStore';
 import applyCustomModalOptions from '@/lib/helpers/applyCustomModalOptions';
 import Twemoji from './Twemoji';
@@ -12,32 +13,51 @@ import useInternal from '@/lib/hooks/useInternal';
 import sleep from '@/lib/helpers/sleep';
 import database from '@/lib/helpers/firebase/database';
 import applyCustomNotificationOptions from '@/lib/helpers/applyCustomNotification';
+import analytics from '@/lib/helpers/firebase/analytics';
 
 export default function StoreEntry(props: StoreItem) {
   const setContextMenuItem = useInternal((s) => s.setContextMenuItems);
-  const importEntry = () => openModal(applyCustomModalOptions({
-    modalId: 'import-confirm-modal',
-    title: <Twemoji>Are you sure? 🤔</Twemoji>,
-    centered: true,
-    children: (<EmoteImporter emotes={props.content} />),
-  }));
+  const importEntry = () => {
+    openModal(applyCustomModalOptions({
+      modalId: 'import-confirm-modal',
+      title: <Twemoji>Are you sure? 🤔</Twemoji>,
+      centered: true,
+      children: (<EmoteImporter emotes={props.content} />),
+    }));
 
-  const openPreview = () => openModal(applyCustomModalOptions({
-    modalId: 'store-preview',
-    size: 'lg',
-    classNames: {
-      title: 'font-medium text-lg'
-    },
-    title: (
-      <p>Previewing <span className="font-bold">{props.name}</span></p>
-    ),
-    centered: true,
-    children: (
-      <section className="flex flex-wrap gap-2 justify-center">
-        {props.content.map((e) => <EmoteView key={e.name} {...e} />)}
-      </section>
-    )
-  }));
+    logEvent(analytics, 'item_import', {
+      item: {
+        name: props.name,
+        id: props.id,
+      }
+    });
+  };
+
+  const openPreview = () => {
+    openModal(applyCustomModalOptions({
+      modalId: 'store-preview',
+      size: 'lg',
+      classNames: {
+        title: 'font-medium text-lg'
+      },
+      title: (
+        <p>Previewing <span className="font-bold">{props.name}</span></p>
+      ),
+      centered: true,
+      children: (
+        <section className="flex flex-wrap gap-2 justify-center">
+          {props.content.map((e) => <EmoteView key={e.name} {...e} />)}
+        </section>
+      )
+    }));
+
+    logEvent(analytics, 'view_item', {
+      item: {
+        name: props.name,
+        id: props.id,
+      }
+    });
+  };
 
   const del = async () => {
     try {
