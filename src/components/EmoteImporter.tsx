@@ -25,7 +25,7 @@ export default function EmoteImporter({ emotes }: { emotes: Emote[] }) {
     if (overwrite) setEmotes(mappedEmote);
     else {
       const all = useEmotes.getState().emotes;
-      const clearedDupe = mappedEmote.filter((e) => !all.some((a) => a.name === e.name));
+      const clearedDupe = mappedEmote.filter((e) => !all.some((a) => a.file === e.file));
 
       useEmotes.setState((curr) => ({ emotes: [...curr.emotes, ...clearedDupe] }));
       dupes = emotes.length - clearedDupe.length;

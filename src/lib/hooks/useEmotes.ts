@@ -1,14 +1,22 @@
 import create from 'zustand';
 import { combine } from 'zustand/middleware';
 import shallow from 'zustand/shallow';
+import MiniSearch from 'minisearch';
 import { subscribeToUserEmoteData, writeUserEmoteData } from '../helpers/firebase/database';
 import Emote from '../structs/Emote';
 import useUser from './useUser';
+
+const searchEngine = new MiniSearch<Emote>({
+  fields: ['name'],
+  idField: 'file',
+  storeFields: ['file'],
+});
 
 const useEmotes = create(
   combine({
     emotes: [] as Emote[],
     loading: true,
+    searchEngine
   }, (set) => ({
     setLoading: (loading: boolean) => set({ loading }),
     setEmotes: (emotes: Emote[]) => set({ emotes }),
@@ -37,6 +45,9 @@ useEmotes.subscribe(({ emotes }, { emotes: pastEmotes }) => {
 
   // Firebase
   writeUserEmoteData(user.uid, emotes);
+
+  searchEngine.removeAll();
+  searchEngine.addAll(emotes);
 });
 
 export const loadEmotesFromStorage = () => {

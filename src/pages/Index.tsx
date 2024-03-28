@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useMemo } from 'react';
 import shallow from 'zustand/shallow';
 
 import { logEvent } from 'firebase/analytics';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import isURL from '@/lib/helpers/isURL';
 import isDiscordEmojiURL from '@/lib/helpers/isDiscordEmojiURL';
 import applyCustomNotificationOptions from '@/lib/helpers/applyCustomNotification';
@@ -18,11 +19,13 @@ import Layout from '@/components/Layout';
 import Loading from '@/components/Loading';
 import NotFound from '@/components/NotFound';
 import Twemoji from '@/components/Twemoji';
+import useChunked from '@/lib/hooks/useChunked';
 
 export default function Index() {
   const [onlyShowFavorites, autoSort] = useConfig((s) => [s.onlyShowFavorites, s.autoSort], shallow);
   const userLoading = useUser((s) => s.loading);
-  const [emotes, loading] = useEmotes((s) => [s.emotes, s.loading], shallow);
+  const [loading, searchEngine] = useEmotes((s) => [s.loading, s.searchEngine], shallow);
+  const emotes = useEmotes((s) => s.emotes, (a, b) => JSON.stringify(a.map(({ totalUses, ...v }) => v)) === JSON.stringify(b.map(({ totalUses, ...v }) => v)));
   const searchTerm = useInternal((s) => s.searchQuery);
 
   useWindowEvent('paste', (ev) => {
@@ -63,10 +66,17 @@ export default function Index() {
     });
   }, []);
 
-  const prepedEmote = useMemo(() => emotes
-    .filter((e) => onlyShowFavorites ? e.favorite : true)
-    .filter((e) => searchTerm ? e.name.includes(searchTerm) : true)
-    .sort((a, b) => {
+  const mappedEmotes = useMemo(() => emotes.map((e) => [e, <EmoteView key={e.file} {...e} />] as const), [emotes]);
+  const onlyFavorites = useMemo(() => mappedEmotes.filter(([e]) => onlyShowFavorites ? e.favorite : true), [mappedEmotes, onlyShowFavorites]);
+  const filteredEmotes = useMemo(() => {
+    if (!searchTerm) return onlyFavorites;
+
+    const result = searchEngine.search(searchTerm);
+
+    return onlyFavorites.filter(([e]) => result.some((r) => r.id === e.file));
+  }, [searchTerm, onlyFavorites]);
+  const sortedEmotes = useMemo(() => filteredEmotes
+    .toSorted(([a], [b]) => {
       if (autoSort === AutoSort.NAME_REVERSE) return b.name.localeCompare(a.name);
       if (autoSort === AutoSort.FAVORITE) return Number(b.favorite) - Number(a.favorite);
       if (autoSort === AutoSort.USES) return b.totalUses - a.totalUses;
@@ -74,20 +84,42 @@ export default function Index() {
       if (autoSort === AutoSort.TIME_REVERSE) return a.addedAt - b.addedAt;
 
       return a.name.localeCompare(b.name);
-    })
-    .map((emote) => (
-      <EmoteView key={emote.name} {...emote} />
-    )), [searchTerm, emotes, onlyShowFavorites, autoSort]);
+    }), [filteredEmotes, autoSort]);
+  const elements = useMemo(() => sortedEmotes.map(([, element]) => element), [sortedEmotes]);
+  const [paginatedElements, hasNext, next] = useChunked(elements, 80);
+
+  useEffect(() => {
+    if (loading || userLoading) return;
+
+    const run = async () => {
+      const result = next();
+
+      if (!result.done || document.body.clientHeight < window.innerHeight) next();
+    };
+
+    run();
+  }, [next, loading, userLoading]);
 
   return (
     <Layout>
       {onlyShowFavorites && <h2 className="mb-3 font-bold text-lg italic text-center">Favorites only</h2>}
+      {searchTerm && !!sortedEmotes.length && <h2 className="mb-3 font-bold text-lg italic text-center">Search results ({sortedEmotes.length})</h2>}
 
-      <section className="flex flex-wrap gap-2 justify-center">
-        {!loading && !userLoading && prepedEmote}
+      <section>
+        {!loading && !userLoading && !!sortedEmotes.length && (
+          <InfiniteScroll
+            dataLength={paginatedElements.length}
+            next={next}
+            hasMore={hasNext}
+            loader={<Loading />}
+            className="flex flex-wrap gap-2 justify-center w-full"
+          >
+            {paginatedElements}
+          </InfiniteScroll>
+        )}
 
-        {!prepedEmote.length && !userLoading && !loading && <NotFound />}
-        {!prepedEmote.length && (userLoading || loading) && <Loading />}
+        {!sortedEmotes.length && !userLoading && !loading && <NotFound />}
+        {!sortedEmotes.length && (userLoading || loading) && <Loading />}
       </section>
     </Layout>
   );
