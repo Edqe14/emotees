@@ -20,6 +20,7 @@ import applyCustomModalOptions from '@/lib/helpers/applyCustomModalOptions';
 import { EmojiInfo } from '@/lib/helpers/startNewEmojiFlow';
 import sleep from '@/lib/helpers/sleep';
 import analytics from '@/lib/helpers/firebase/analytics';
+import getConfirmation from '@/lib/helpers/getConfirmation';
 
 export default function EmoteView({ name, file, favorite }: Emote) {
   const [setContextMenuItem, setContextMenuPosition] = useInternal((s) => [s.setContextMenuItems, s.setContextMenuPosition], shallow);
@@ -78,13 +79,35 @@ export default function EmoteView({ name, file, favorite }: Emote) {
     }
   };
 
-  const del = () => {
+  const del = async () => {
     setScrollPosition(window.scrollY);
 
     const { emotes, removeEmote } = useEmotes.getState();
     const index = emotes.findIndex((e) => e.name === name);
 
     if (index !== -1) {
+      const confirm = await getConfirmation({
+        title: 'Are you sure?',
+        centered: true,
+        labels: {
+          cancel: 'Nevermind',
+          confirm: 'Do it!',
+        },
+        confirmProps: {
+          color: 'red'
+        },
+        children: (
+          <Twemoji>
+            This will remove{' '}
+            <span className="font-semibold text-slate-500 dark:text-slate-300">
+              {name}
+            </span>{' '}
+            from your collection.
+          </Twemoji>
+        ),
+      });
+
+      if (!confirm) return;
       removeEmote(index);
 
       return showNotification(

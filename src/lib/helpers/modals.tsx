@@ -62,7 +62,6 @@ const clearAll = () => {
       },
       confirmProps: {
         color: 'red',
-        variant: 'outline',
       },
       onConfirm: () => {
         closeAllModals();
@@ -110,6 +109,7 @@ export const manageModal = () => {
             <section className="flex items-center justify-center">
               <Button
                 color="red"
+                variant="outline"
                 rightIcon={<IconTrash size={18} />}
                 onClick={clearAll}>
                 Clear all
