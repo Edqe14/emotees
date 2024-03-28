@@ -24,7 +24,7 @@ import useChunked from '@/lib/hooks/useChunked';
 export default function Index() {
   const [onlyShowFavorites, autoSort] = useConfig((s) => [s.onlyShowFavorites, s.autoSort], shallow);
   const userLoading = useUser((s) => s.loading);
-  const [loading, searchEngine] = useEmotes((s) => [s.loading, s.searchEngine], shallow);
+  const [loading] = useEmotes((s) => [s.loading], shallow);
   const emotes = useEmotes((s) => s.emotes, (a, b) => JSON.stringify(a.map(({ totalUses, ...v }) => v)) === JSON.stringify(b.map(({ totalUses, ...v }) => v)));
   const searchTerm = useInternal((s) => s.searchQuery);
 
@@ -71,9 +71,7 @@ export default function Index() {
   const filteredEmotes = useMemo(() => {
     if (!searchTerm) return onlyFavorites;
 
-    const result = searchEngine.search(searchTerm);
-
-    return onlyFavorites.filter(([e]) => result.some((r) => r.id === e.file));
+    return onlyFavorites.filter(([e]) => e.name.toLowerCase().includes(searchTerm.toLowerCase()));
   }, [searchTerm, onlyFavorites]);
   const sortedEmotes = useMemo(() => filteredEmotes
     .toSorted(([a], [b]) => {
