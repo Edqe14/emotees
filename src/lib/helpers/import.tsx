@@ -9,6 +9,7 @@ import Emote, { EmoteValidator } from '../structs/Emote';
 import applyCustomModalOptions from './applyCustomModalOptions';
 import useUser from '../hooks/useUser';
 import useInternal from '../hooks/useInternal';
+import isValidDiscordToken from './isValidDiscordToken';
 
 const fromFile = () => {
   const input = document.createElement('input');
@@ -101,13 +102,28 @@ const fromLocalStorage = () => {
 
 const DiscordTokenInput = () => {
   const [value, setValue] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const close = () => {
     useInternal.setState({ pasteLock: false });
     closeAllModals();
   };
 
-  const save = () => {
+  const save = async () => {
+    setLoading(true);
+
+    const ok = await isValidDiscordToken(value);
+
+    setLoading(false);
+
+    if (!ok) {
+      return showNotification({
+        title: <Twemoji>Error ❌</Twemoji>,
+        message: 'Invalid token',
+        color: 'red',
+      });
+    }
+
     useUser.setState({ discordToken: value });
     close();
   };
@@ -131,7 +147,7 @@ const DiscordTokenInput = () => {
           <Button color="red" variant="outline" onClick={close}>Never mind</Button>
 
           <Link to="/discord_import">
-            <Button onClick={save}>Continue</Button>
+            <Button onClick={save} loading={loading}>Continue</Button>
           </Link>
         </div>
       </div>
