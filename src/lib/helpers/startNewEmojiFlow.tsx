@@ -1,8 +1,9 @@
 import { Button, Image, Input as MantineInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { openModal, useModals } from '@mantine/modals';
+import { closeAllModals, openModal, useModals } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
 import { createRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Twemoji from '@/components/Twemoji';
 import useEmotes from '../hooks/useEmotes';
 import useInternal from '../hooks/useInternal';
@@ -185,9 +186,13 @@ export default function startNewEmojiFlow(emojiUrl?: string) {
                 ref={inputRef}
                 type="text"
                 required
-                className="dark:bg-monotone-600 focus:dark:border-monotone-400"
+                className="dark:bg-monotone-600 focus:dark:border-monotone-400 mb-2"
                 {...form.getInputProps('url')}
               />
+
+              <MantineInput.Label>
+                or <Link to="/discord_import" onClick={() => closeAllModals()} className="text-blue-500">Import from Discord</Link>
+              </MantineInput.Label>
             </MantineInput.Wrapper>
 
             <section className="flex gap-4 justify-end">
