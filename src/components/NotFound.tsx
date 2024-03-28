@@ -8,9 +8,14 @@ export default function NotFound() {
 
       <h2 className="text-lg text-center font-medium italic select-none">oh nyo! can&apos;t find anything</h2>
 
-      <Link to="/store" className="text-blue-500 mt-2">
-        <Button className="mt-2">Check the store</Button>
-      </Link>
+      <div className="flex gap-4">
+        <Link to="/store" className="text-blue-500 mt-2">
+          <Button className="mt-2">Check the store</Button>
+        </Link>
+        <Link to="/discord_import" className="text-blue-500 mt-2">
+          <Button className="mt-2" color="teal">Import from Discord</Button>
+        </Link>
+      </div>
     </section>
   );
 }

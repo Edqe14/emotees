@@ -115,7 +115,7 @@ const DiscordTokenInput = () => {
   return (
     <section>
       <p className="mb-2">
-        To import emotes from Discord, you need to provide your token. Don&apos;t worry, we won&apos;t save your token into a server.
+        To import emotes from Discord, you need to provide your token. Don&apos;t worry, we <b>won&apos;t</b> save your token into a server, everything is done locally in your browser.
       </p>
 
       <div className="flex flex-col gap-2">
