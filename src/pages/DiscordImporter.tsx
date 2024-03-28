@@ -113,8 +113,8 @@ export default function DiscordImporter() {
   return (
     <Layout className="flex flex-col">
       <div className="flex gap-4 justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Discord Importer (BETA)</h1>
-        <Button onClick={() => fromDiscord(navigate)}>
+        <h1 className="text-2xl font-bold">Discord Importer</h1>
+        <Button onClick={() => fromDiscord(navigate, true)}>
           Change Token
         </Button>
       </div>

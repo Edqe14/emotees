@@ -139,10 +139,10 @@ const DiscordTokenInput = () => {
   );
 };
 
-export const fromDiscord = async (navigate: NavigateFunction) => {
+export const fromDiscord = async (navigate: NavigateFunction, force = false) => {
   useInternal.setState({ pasteLock: true });
 
-  if (useUser.getState().discordToken) {
+  if (useUser.getState().discordToken && !force) {
     closeAllModals();
     return navigate('/discord_import');
   }
