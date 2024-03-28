@@ -12,6 +12,7 @@ import useTheme from './lib/hooks/useTheme';
 import useUser from './lib/hooks/useUser';
 import Index from './pages/Index';
 import Store from './pages/Store';
+import DiscordImporter from './pages/DiscordImporter';
 
 export default function App() {
   const { toggleTheme } = useTheme();
@@ -54,6 +55,7 @@ export default function App() {
         <Routes key={location.pathname} location={location}>
           <Route path="/" element={<Index />} />
           <Route path="/store" element={<Store />} />
+          <Route path="/discord_import" element={<DiscordImporter />} />
         </Routes>
       </AnimatePresence>
     </>

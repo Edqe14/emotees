@@ -8,6 +8,7 @@ import auth from '../helpers/firebase/auth';
 const useUser = create(
   combine({} as Partial<User>, (set) => ({
     loading: true,
+    discordToken: null as string | null,
     setUser: (user: User) => set(user),
   }))
 );

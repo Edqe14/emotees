@@ -2,8 +2,9 @@ import { ActionIcon, Card, Image, Menu, Tooltip } from '@mantine/core';
 import { IconPlus, IconTrash } from '@tabler/icons';
 import { openModal } from '@mantine/modals';
 import { ref, remove } from 'firebase/database';
-import { showNotification } from '@mantine/notifications';
+import { hideNotification, showNotification } from '@mantine/notifications';
 import { logEvent } from 'firebase/analytics';
+import { useState } from 'react';
 import { StoreItem } from '@/lib/hooks/useStore';
 import applyCustomModalOptions from '@/lib/helpers/applyCustomModalOptions';
 import Twemoji from './Twemoji';
@@ -14,15 +15,51 @@ import sleep from '@/lib/helpers/sleep';
 import database from '@/lib/helpers/firebase/database';
 import applyCustomNotificationOptions from '@/lib/helpers/applyCustomNotification';
 import analytics from '@/lib/helpers/firebase/analytics';
+import Emote from '@/lib/structs/Emote';
 
 export default function StoreEntry(props: StoreItem) {
+  const [content, setContent] = useState<Emote[] | null>(Array.isArray(props.content) ? props.content : null);
   const setContextMenuItem = useInternal((s) => s.setContextMenuItems);
-  const importEntry = () => {
+
+  const fetchContent = async () => {
+    if (typeof props.content === 'function') {
+      const data = await props.content();
+
+      setContent(data);
+      return data;
+    }
+
+    return props.content;
+  };
+
+  const importEntry = async () => {
+    let temp = content;
+    if (!temp) {
+      showNotification(applyCustomNotificationOptions({
+        title: <Twemoji>Loading 🔄</Twemoji>,
+        color: 'blue',
+        message: 'Fetching emotes...',
+        id: 'import-loading'
+      }));
+
+      temp = await fetchContent();
+
+      hideNotification('import-loading');
+    }
+
+    if (!temp.length) {
+      return showNotification(applyCustomNotificationOptions({
+        title: <Twemoji>No emotes 😕</Twemoji>,
+        color: 'red',
+        message: 'No emotes found in this entry.'
+      }));
+    }
+
     openModal(applyCustomModalOptions({
       modalId: 'import-confirm-modal',
       title: <Twemoji>Are you sure? 🤔</Twemoji>,
       centered: true,
-      children: (<EmoteImporter emotes={props.content} />),
+      children: (<EmoteImporter emotes={temp} />),
     }));
 
     logEvent(analytics, 'item_import', {
@@ -33,7 +70,29 @@ export default function StoreEntry(props: StoreItem) {
     });
   };
 
-  const openPreview = () => {
+  const openPreview = async () => {
+    let temp = content;
+    if (!temp) {
+      showNotification(applyCustomNotificationOptions({
+        title: <Twemoji>Loading 🔄</Twemoji>,
+        color: 'blue',
+        message: 'Fetching emotes...',
+        id: 'import-loading'
+      }));
+
+      temp = await fetchContent();
+
+      hideNotification('import-loading');
+    }
+
+    if (!temp.length) {
+      return showNotification(applyCustomNotificationOptions({
+        title: <Twemoji>No emotes 😕</Twemoji>,
+        color: 'red',
+        message: 'No emotes found in this guild.'
+      }));
+    }
+
     openModal(applyCustomModalOptions({
       modalId: 'store-preview',
       size: 'lg',
@@ -46,7 +105,7 @@ export default function StoreEntry(props: StoreItem) {
       centered: true,
       children: (
         <section className="flex flex-wrap gap-2 justify-center">
-          {props.content.map((e) => <EmoteView key={e.name} {...e} />)}
+          {temp.map((e) => <EmoteView key={e.name} {...e} />)}
         </section>
       )
     }));
@@ -111,7 +170,12 @@ export default function StoreEntry(props: StoreItem) {
       <section className="flex justify-between items-center gap-4">
         <section>
           <h2 className="text-xl font-semibold capitalize">{props.name}</h2>
-          <p className="opacity-70"><span className="font-semibold text-gray-900 dark:text-slate-300">{props.content.length}</span> emotes</p>
+          <p className="opacity-70">
+            {!content && (<p>Haven&apos;t fetched</p>)}
+            {content && (
+              <><span className="font-semibold text-gray-900 dark:text-slate-300">{content.length}</span> emotes</>
+            )}
+          </p>
         </section>
 
         <Tooltip label="Import" color="violet" withinPortal withArrow position="left">

@@ -9,7 +9,7 @@ export interface StoreItem {
   id: string;
   name: string;
   thumbnail: string;
-  content: Emote[];
+  content: Emote[] | (() => Promise<Emote[]>);
   thumbUrl?: string;
 }
 

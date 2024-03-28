@@ -6,6 +6,7 @@ interface Emote {
   favorite: boolean;
   addedAt: number;
   totalUses: number;
+  isSticker?: boolean;
 }
 
 export default Emote;

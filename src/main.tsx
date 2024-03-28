@@ -25,13 +25,13 @@ const Root = () => {
         fontFamily: 'Cabin, sans-serif',
       }}
     >
-      <ModalsProvider modalProps={{ zIndex: 350 }}>
-        <NotificationsProvider>
-          <BrowserRouter>
+      <BrowserRouter>
+        <ModalsProvider modalProps={{ zIndex: 350 }}>
+          <NotificationsProvider>
             <App />
-          </BrowserRouter>
-        </NotificationsProvider>
-      </ModalsProvider>
+          </NotificationsProvider>
+        </ModalsProvider>
+      </BrowserRouter>
     </MantineProvider>
   );
 };
