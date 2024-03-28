@@ -26,7 +26,7 @@ export default function HelpMenu(){
 
       <Accordion.Item value="features">
         <Accordion.Control>
-          <Twemoji>🪩 Features</Twemoji>
+          <Twemoji>🌸 Features</Twemoji>
         </Accordion.Control>
 
         <Accordion.Panel>

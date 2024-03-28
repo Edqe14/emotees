@@ -7,6 +7,7 @@ import { ref, set } from 'firebase/database';
 import { nanoid } from 'nanoid';
 import { useEffect } from 'react';
 import { logEvent } from 'firebase/analytics';
+import { pick } from 'lodash-es';
 import Layout from '@/components/Layout';
 import useUser from '@/lib/hooks/useUser';
 import Twemoji from '@/components/Twemoji';
@@ -43,7 +44,7 @@ function PublishStoreContent() {
     },
     transformValues: (values) => ({
       ...values,
-      content: JSON.parse(values.content)
+      content: JSON.parse(values.content).map((val: Emote) => pick(val, ['name', 'file']))
     })
   });
 
