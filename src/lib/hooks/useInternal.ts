@@ -10,6 +10,7 @@ const useInternal = create(
     scrollPosition: 0,
     searchQuery: '',
 
+    contextMenuFlipped: false,
     showContextMenu: false,
     contextMenuPosition: [0, 0],
     contextMenuItems: null as ReactNode | null,
@@ -21,6 +22,7 @@ const useInternal = create(
     setShowContextMenu: (showContextMenu: boolean) => set({ showContextMenu }),
     setContextMenuPosition: (contextMenuPosition: [number, number]) => set({ contextMenuPosition }),
     setContextMenuItems: (contextMenuItems: ReactNode | null) => set({ contextMenuItems }),
+    setContextMenuFlipped: (contextMenuFlipped: boolean) => set({ contextMenuFlipped }),
   }))
 );
 

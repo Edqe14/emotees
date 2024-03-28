@@ -10,7 +10,7 @@ import {
 import { openModal } from '@mantine/modals';
 import { logEvent } from 'firebase/analytics';
 import shallow from 'zustand/shallow';
-import { createRef } from 'react';
+import { createRef, MouseEventHandler } from 'react';
 import Emote from '@/lib/structs/Emote';
 import applyCustomNotificationOptions from '@/lib/helpers/applyCustomNotification';
 import Twemoji from './Twemoji';
@@ -18,12 +18,12 @@ import useEmotes from '@/lib/hooks/useEmotes';
 import useInternal from '@/lib/hooks/useInternal';
 import applyCustomModalOptions from '@/lib/helpers/applyCustomModalOptions';
 import { EmojiInfo } from '@/lib/helpers/startNewEmojiFlow';
-import sleep from '@/lib/helpers/sleep';
 import analytics from '@/lib/helpers/firebase/analytics';
 import getConfirmation from '@/lib/helpers/getConfirmation';
+import sleep from '@/lib/helpers/sleep';
 
 export default function EmoteView({ name, file, favorite }: Emote) {
-  const [setContextMenuItem, setContextMenuPosition] = useInternal((s) => [s.setContextMenuItems, s.setContextMenuPosition], shallow);
+  const [setContextMenuItem, setContextMenuPosition, setShowContextMenu, setContextMenuFlipped] = useInternal((s) => [s.setContextMenuItems, s.setContextMenuPosition, s.setShowContextMenu, s.setContextMenuFlipped], shallow);
   const setScrollPosition = useInternal((s) => s.setScrollPosition);
   const ref = createRef<HTMLSpanElement>();
   const url = `https://cdn.discordapp.com/emojis/${file}?size=48&quality=lossless`;
@@ -194,14 +194,9 @@ export default function EmoteView({ name, file, favorite }: Emote) {
     }
   };
 
-  const onContextMenu = async () => {
-    await sleep();
-
-    if (ref.current) {
-      const rect = ref.current.getBoundingClientRect();
-
-      setContextMenuPosition([rect.left + rect.width / 2, rect.bottom + 5]);
-    }
+  const onContextMenu: MouseEventHandler<HTMLSpanElement> = async (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
 
     setContextMenuItem(
       <>
@@ -226,6 +221,23 @@ export default function EmoteView({ name, file, favorite }: Emote) {
         </Menu.Item>
       </>
     );
+
+    if (ref.current) {
+      await sleep();
+
+      const rect = ref.current.getBoundingClientRect();
+      const menu = document.querySelector('#context_menu');
+      const height = menu?.getBoundingClientRect().height || 260;
+
+      const y = ev.clientY + height > window.innerHeight
+        ? window.scrollY + rect.bottom - height - rect.height - 5
+        : window.scrollY + rect.bottom + 5;
+
+      setContextMenuFlipped(ev.clientY + rect.bottom + 5 > window.innerHeight);
+      setContextMenuPosition([rect.left + rect.width / 2, y]);
+    }
+
+    setShowContextMenu(true);
   };
 
   return (

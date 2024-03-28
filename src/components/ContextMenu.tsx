@@ -3,6 +3,7 @@ import shallow from 'zustand/shallow';
 import { useWindowEvent } from '@mantine/hooks';
 import { IconMoon, IconSun } from '@tabler/icons';
 import { createRef } from 'react';
+import classNames from 'classnames';
 import useInternal from '@/lib/hooks/useInternal';
 import useTheme from '@/lib/hooks/useTheme';
 import getOSModKey from '@/lib/helpers/getOSModKey';
@@ -12,8 +13,8 @@ export default function ContextMenu() {
   const closeDuration = 200;
 
   const { theme, toggleTheme } = useTheme();
-  const [show, position, items] = useInternal((s) => [s.showContextMenu, s.contextMenuPosition, s.contextMenuItems], shallow);
-  const [setPosition, setShow, setItems] = useInternal((s) => [s.setContextMenuPosition, s.setShowContextMenu, s.setContextMenuItems], shallow);
+  const [show, position, items, flipped] = useInternal((s) => [s.showContextMenu, s.contextMenuPosition, s.contextMenuItems, s.contextMenuFlipped], shallow);
+  const [setPosition, setShow, setItems, setFlipped] = useInternal((s) => [s.setContextMenuPosition, s.setShowContextMenu, s.setContextMenuItems, s.setContextMenuFlipped], shallow);
 
   const timeoutRef = createRef<number>();
   const close = () => {
@@ -39,15 +40,22 @@ export default function ContextMenu() {
 
     ev.preventDefault();
 
+    const menu = document.querySelector('#context_menu');
+    const height = menu?.getBoundingClientRect().height || 0;
+
+    const y = ev.clientY + height > window.innerHeight
+      ? window.scrollY + ev.clientY - height - 20
+      : window.scrollY + (ev.clientY + 20);
+
+    setFlipped(ev.clientY + height > window.innerHeight);
     setItems(null);
-    setPosition([ev.clientX, ev.clientY + 20]);
+    setPosition([ev.clientX, y]);
     setShow(true);
   });
 
   return (
     <Menu
       withArrow
-      position="bottom"
       arrowSize={9}
       zIndex={301}
       onClose={close}
@@ -63,11 +71,11 @@ export default function ContextMenu() {
         },
       }}
       classNames={{
-        dropdown: 'fixed',
-        arrow: 'left-1/2 -translate-x-1/2 rotate-45',
+        dropdown: 'absolute',
+        arrow: classNames('left-1/2 -translate-x-1/2 rotate-45', flipped && 'bottom-[-5.5px] top-[unset] rotate-[225deg]'),
       }}
     >
-      <Menu.Dropdown className="dark:bg-slate-800">
+      <Menu.Dropdown className="dark:bg-slate-800" id="context_menu">
         <Menu.Item
           onClick={toggleTheme}
           icon={
