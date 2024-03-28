@@ -1,8 +1,8 @@
 import { Button, Input } from '@mantine/core';
-import { closeAllModals, closeModal, openModal } from '@mantine/modals';
+import { closeAllModals, openModal } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
-import { Link, Navigate, NavigateFunction, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
+import { ChangeEvent, useState } from 'react';
 import Twemoji from '@/components/Twemoji';
 import EmoteImporter from '@/components/EmoteImporter';
 import Emote, { EmoteValidator } from '../structs/Emote';
@@ -124,7 +124,7 @@ const DiscordTokenInput = () => {
           required
           className="dark:bg-monotone-600 focus:dark:border-monotone-400"
           value={value}
-          onChange={(ev) => setValue(ev.target.value)}
+          onChange={(ev: ChangeEvent<HTMLInputElement>) => setValue(ev.target.value)}
         />
 
         <div className="flex gap-2 justify-end">
