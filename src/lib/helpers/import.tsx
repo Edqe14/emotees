@@ -124,6 +124,7 @@ const DiscordTokenInput = () => {
       });
     }
 
+    localStorage.setItem('distok', value);
     useUser.setState({ discordToken: value });
     close();
   };

@@ -9,6 +9,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     '@edqe/eslint-config'
   ],
+  'parser': '@typescript-eslint/parser',
   'rules': {
     'linebreak-style': [
       'error',
