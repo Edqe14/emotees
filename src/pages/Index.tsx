@@ -6,7 +6,9 @@ import shallow from "zustand/shallow";
 import { logEvent } from "firebase/analytics";
 import InfiniteScroll from "react-infinite-scroll-component";
 import isURL from "@/lib/helpers/isURL";
-import isDiscordEmojiURL from "@/lib/helpers/isDiscordEmojiURL";
+import isDiscordEmojiURL, {
+  isDiscordStickerURL,
+} from "@/lib/helpers/isDiscordEmojiURL";
 import applyCustomNotificationOptions from "@/lib/helpers/applyCustomNotification";
 import startNewEmojiFlow from "@/lib/helpers/startNewEmojiFlow";
 import useEmotes from "@/lib/hooks/useEmotes";
@@ -46,8 +48,9 @@ export default function Index() {
 
       const text = e.clipboardData?.getData("text");
       if (text && isURL(text)) {
-        if (isDiscordEmojiURL(text)) {
-          startNewEmojiFlow(text);
+        const isSticker = isDiscordStickerURL(text);
+        if (isDiscordEmojiURL(text) || isSticker) {
+          startNewEmojiFlow(text, isSticker);
 
           return;
         }
