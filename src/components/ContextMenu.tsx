@@ -57,7 +57,7 @@ export default function ContextMenu() {
     ev.preventDefault();
 
     const menu = document.querySelector("#context_menu");
-    const height = menu?.getBoundingClientRect().height || 0;
+    const height = menu?.getBoundingClientRect().height || 64;
 
     const y =
       ev.clientY + height > window.innerHeight
@@ -95,20 +95,22 @@ export default function ContextMenu() {
         ),
       }}
     >
-      <Menu.Dropdown className="dark:bg-slate-800" id="context_menu">
-        <Menu.Item
-          onClick={toggleTheme}
-          icon={
-            theme === "dark" ? <IconSun size={16} /> : <IconMoon size={16} />
-          }
-          rightSection={
-            <Text color="dimmed" size="xs">
-              {getOSModKey()} + J
-            </Text>
-          }
-        >
-          Toggle Theme
-        </Menu.Item>
+      <Menu.Dropdown className="dark:bg-slate-800 z-[400]" id="context_menu">
+        {!items && (
+          <Menu.Item
+            onClick={toggleTheme}
+            icon={
+              theme === "dark" ? <IconSun size={16} /> : <IconMoon size={16} />
+            }
+            rightSection={
+              <Text color="dimmed" size="xs">
+                {getOSModKey()} + J
+              </Text>
+            }
+          >
+            Toggle Theme
+          </Menu.Item>
+        )}
 
         {items}
       </Menu.Dropdown>

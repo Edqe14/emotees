@@ -222,9 +222,7 @@ export default function EmoteView({ name, file, favorite, isSticker }: Emote) {
 
     setContextMenuItem(
       <>
-        <Menu.Divider />
-
-        <Menu.Label>Emote</Menu.Label>
+        <Menu.Label>{isSticker ? "Sticker" : "Emoji"}</Menu.Label>
 
         <Menu.Item onClick={onClick} icon={<IconLink size={16} />}>
           Copy URL
