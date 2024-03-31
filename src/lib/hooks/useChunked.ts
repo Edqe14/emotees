@@ -9,27 +9,16 @@ const useChunked = <T>(data: T[], chunkSize: number) => {
   useEffect(() => {
     const result = generator.next();
 
-    if (result.done) {
-      setAll([]);
-      setHasNext(false);
-
-      return;
-    }
-
-    setAll(result.value);
-    setHasNext(true);
+    setAll(result.value ?? []);
+    setHasNext(!result.done);
   }, [generator]);
 
   const next = useCallback(() => {
     const result = generator.next();
 
-    if (result.done) {
-      setHasNext(false);
+    setAll((prev) => [...prev, ...result.value ?? []]);
+    setHasNext(!result.done);
 
-      return result;
-    }
-
-    setAll((prev) => [...prev, ...result.value]);
     return result;
   }, [generator]);
 
