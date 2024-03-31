@@ -1,8 +1,11 @@
-import { pick } from 'lodash-es';
-import create from 'zustand';
-import { combine } from 'zustand/middleware';
-import { subscribeToUserConfigData, writeUserConfigData } from '../helpers/firebase/database';
-import useUser from './useUser';
+import { pick } from "lodash-es";
+import create from "zustand";
+import { combine } from "zustand/middleware";
+import {
+  subscribeToUserConfigData,
+  writeUserConfigData,
+} from "../helpers/firebase/database";
+import useUser from "./useUser";
 
 // eslint-disable-next-line no-shadow
 export enum AutoSort {
@@ -11,40 +14,49 @@ export enum AutoSort {
   FAVORITE = 2,
   USES = 3,
   TIME = 4,
-  TIME_REVERSE = 5
+  TIME_REVERSE = 5,
 }
 
 export type Config = {
   onlyShowFavorites: boolean;
   namePrefix: string;
   autoSort: AutoSort;
+  mode: "emojis" | "stickers";
 };
 
 export const DEFAULT_CONFIG: Config = {
   onlyShowFavorites: false,
-  namePrefix: '',
+  namePrefix: "",
   autoSort: AutoSort.FAVORITE,
+  mode: "emojis",
 };
 
 const useConfig = create(
-  combine(DEFAULT_CONFIG, (set) => ({
-    setOnlyShowFavorites: (onlyShowFavorites: boolean) => set({ onlyShowFavorites }),
+  combine(DEFAULT_CONFIG, (set, get) => ({
+    setOnlyShowFavorites: (onlyShowFavorites: boolean) =>
+      set({ onlyShowFavorites }),
     setNamePrefix: (namePrefix: string) => set({ namePrefix }),
     setAutoSort: (autoSort: AutoSort) => set({ autoSort }),
+    setMode: (mode: Config["mode"]) => set({ mode }),
+    toggleMode: () =>
+      set({ mode: get().mode === "emojis" ? "stickers" : "emojis" }),
   }))
 );
 
 useConfig.subscribe((config) => {
   const user = useUser.getState();
   if (user.loading) return;
-  if (!user.uid) return localStorage.setItem('config', JSON.stringify(config));
+  if (!user.uid) return localStorage.setItem("config", JSON.stringify(config));
 
   // Firebase
-  writeUserConfigData(user.uid, pick(config, Object.keys(DEFAULT_CONFIG)) as Config);
+  writeUserConfigData(
+    user.uid,
+    pick(config, Object.keys(DEFAULT_CONFIG)) as Config
+  );
 });
 
 export const loadConfigFromStorage = () => {
-  const config = localStorage.getItem('config');
+  const config = localStorage.getItem("config");
 
   try {
     if (config) {
@@ -55,7 +67,7 @@ export const loadConfigFromStorage = () => {
       return parsed;
     }
 
-    localStorage.setItem('config', JSON.stringify(useConfig.getState()));
+    localStorage.setItem("config", JSON.stringify(useConfig.getState()));
 
     return useConfig.getState();
   } catch {
@@ -63,6 +75,7 @@ export const loadConfigFromStorage = () => {
   }
 };
 
-export const loadConfigFromFirebase = (userId: string) => subscribeToUserConfigData(userId, (data) => useConfig.setState(data));
+export const loadConfigFromFirebase = (userId: string) =>
+  subscribeToUserConfigData(userId, (data) => useConfig.setState(data));
 
 export default useConfig;
