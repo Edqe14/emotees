@@ -23,12 +23,16 @@ import getConfirmation from "@/lib/helpers/getConfirmation";
 import sleep from "@/lib/helpers/sleep";
 import concat from "@/lib/helpers/concat";
 
-const getUrl = (file: string, isSticker?: boolean) => {
+const getUrl = (file: string, isSticker?: boolean, higherQuality = false) => {
   if (isSticker) {
-    return `https://media.discordapp.net/stickers/${file}?size=160&quality=lossless`;
+    return `https://media.discordapp.net/stickers/${file}?size=${
+      higherQuality ? 240 : 160
+    }&quality=lossless`;
   }
 
-  return `https://cdn.discordapp.com/emojis/${file}?size=48&quality=lossless`;
+  return `https://cdn.discordapp.com/emojis/${file}?size=${
+    higherQuality ? 64 : 48
+  }&quality=lossless`;
 };
 
 export default function EmoteView({ name, file, favorite, isSticker }: Emote) {
@@ -49,6 +53,10 @@ export default function EmoteView({ name, file, favorite, isSticker }: Emote) {
   const setScrollPosition = useInternal((s) => s.setScrollPosition);
   const ref = createRef<HTMLSpanElement>();
   const url = useMemo(() => getUrl(file, isSticker), [file, isSticker]);
+  const previewUrl = useMemo(
+    () => getUrl(file, isSticker, true),
+    [file, isSticker]
+  );
 
   const onClick = async () => {
     setScrollPosition(window.scrollY);
@@ -290,13 +298,9 @@ export default function EmoteView({ name, file, favorite, isSticker }: Emote) {
           decoding="async"
           draggable={false}
           key={name}
-          src={url}
+          src={previewUrl}
           alt={name}
-          className={concat(
-            "aspect-square",
-            !isSticker && "w-16",
-            isSticker && "w-32"
-          )}
+          className={concat(!isSticker && "w-16", isSticker && "w-32")}
         />
       </span>
     </Tooltip>
